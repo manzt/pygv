@@ -57,7 +57,8 @@ def _resolve_file_or_url(path_or_url: str | pathlib.Path):
     if normalized.startswith("http") or normalized.startswith("https"):
         return normalized, False
     path = pathlib.Path(normalized).resolve()
-    assert path.is_file() and path.exists()
+    if not path.is_file() or not path.exists():
+        raise FileNotFoundError(path)
     resource = _PROVIDER.create(path)
     _RESOURCES.add(resource)
     return resource.url, True
