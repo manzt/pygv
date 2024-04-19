@@ -6,7 +6,7 @@ import typing
 
 import servir
 
-from ._tracks import AlignmentTrack, AnnotationTrack, Track, WigTrack, VariantTrack
+from ._tracks import AlignmentTrack, AnnotationTrack, Track, VariantTrack, WigTrack
 from ._widget import Browser
 
 __all__ = ["ref", "browse", "track"]
@@ -102,8 +102,7 @@ def browse(*tracks: TrackArgument) -> Browser:
 
     Parameters
     ----------
-
-    args : tuple[TrackArgument, ...]
+    tracks : tuple[TrackArgument, ...]
         A list of tracks to display in the browser.
 
     Returns
@@ -111,7 +110,6 @@ def browse(*tracks: TrackArgument) -> Browser:
     Browser
         The browser widget.
     """
-
     CONTEXT.current = Browser(
         genome=CONTEXT.genome, locus=CONTEXT.locus, tracks=[track(t) for t in tracks]
     )

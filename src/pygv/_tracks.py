@@ -2,7 +2,14 @@ import typing
 
 import msgspec
 
-__all__ = ["BaseTrack", "AnnotationTrack", "WigTrack", "AlignmentTrack", "VariantTrack", "Track"]
+__all__ = [
+    "BaseTrack",
+    "AnnotationTrack",
+    "WigTrack",
+    "AlignmentTrack",
+    "VariantTrack",
+    "Track",
+]
 
 
 class BaseTrack(msgspec.Struct, rename="camel"):
@@ -56,6 +63,7 @@ class BaseTrack(msgspec.Struct, rename="camel"):
     # other track types.
     visibility_window: int | None = None
 
+
 class AnnotationTrack(BaseTrack, rename="camel"):
     """Represents non-quantitative genome annotations such as genes.
 
@@ -81,13 +89,14 @@ class AnnotationTrack(BaseTrack, rename="camel"):
     # Maximum number of rows of features to display.
     max_rows: int = 500
 
-    # If true, feature names for this track can be searched for. Use this option with caution,
-    # it is memory intensive. This option will not work with indexed tracks.
+    # If true, feature names for this track can be searched for. Use this option with
+    # caution, it is memory intensive. This option will not work with indexed tracks.
     searchable: bool = False
 
     # For use with the searchable option in conjunction with GFF files.
     # An array of field (column 9) names to be included in feature searches.
-    # When searching for feature attributes spaces need to be escaped with a "+" sign or percent encoded ("%20).
+    # When searching for feature attributes spaces need to be escaped with a "+"
+    # sign or percent encoded ("%20).
     searchable_fields: list[str] | None = None
 
     # Array of gff feature types to filter from display.
@@ -118,7 +127,8 @@ class WigTrack(BaseTrack):
     # Autoscale track to maximum value in view
     autoscale: bool | None = None
 
-    # Identifier for an autoscale group. Tracks with the same identifier are autoscaled together.
+    # Identifier for an autoscale group. Tracks with the same identifier are
+    # autoscaled together.
     autoscale_group: str | None = None
 
     # Sets the minimum value for the data (y-axis) scale. Usually zero.
@@ -144,7 +154,8 @@ class WigTrack(BaseTrack):
     # If true, track is drawn "upside down" with zero at top
     flip_axis: bool = False
 
-    # Applicable to tracks created from bigwig and tdf files. Governs how data is summarized when zooming out.
+    # Applicable to tracks created from bigwig and tdf files. Governs how data is
+    # summarized when zooming out.
     window_function: typing.Literal["min", "max", "mean"] = "mean"
 
 
@@ -216,7 +227,8 @@ class AlignmentTrack(BaseTrack):
     # Readgroup ID value (tag 'RG').
     readgroup: str | None = None
 
-    # Initial sort option. Supports various sorting strategies including by base, strand, insert size, etc.
+    # Initial sort option. Supports various sorting strategies including by base,
+    # strand, insert size, etc.
     sort: str | None = None
 
     # Show soft-clipped regions.
@@ -261,7 +273,8 @@ class VariantTrack(BaseTrack, rename="camel"):
     Ref: https://github.com/igvteam/igv.js/wiki/Variant-Track
     """
 
-    # Display mode. 'COLLAPSED' => show variants only, 'SQUISHED' and 'EXPANDED' => show calls.
+    # Display mode. 'COLLAPSED' => show variants only,
+    # 'SQUISHED' and 'EXPANDED' => show calls.
     display_mode: typing.Literal["COLLAPSED", "EXPANDED", "SQUISHED"] = "EXPANDED"
     # Height of genotype call rows in SQUISHED mode.
     squished_call_height: int = 1

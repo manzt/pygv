@@ -1,8 +1,8 @@
 import pathlib
 
 import anywidget
-import traitlets
 import msgspec
+import traitlets
 
 from ._tracks import BaseTrack
 
