@@ -1,8 +1,10 @@
 # pygv
 
-a minimal, scriptable genome browser for python
+a minimal, scriptable genome browser for python built with [anywidget](https://github.com/manzt/anywidget)
 
 ## installation
+
+**Here be dragons 🐉**
 
 ```sh
 pip install pygv
