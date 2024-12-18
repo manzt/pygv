@@ -1114,10 +1114,10 @@ requires-dist = [
 [package.metadata.requires-dev]
 dev = [
     { name = "inline-snapshot", specifier = ">=0.17.1" },
-    { name = "jupyterlab", specifier = ">=4.1.5" },
-    { name = "pytest" },
-    { name = "ruff" },
-    { name = "watchfiles", specifier = ">=0.21.0" },
+    { name = "jupyterlab", specifier = ">=4.3.4" },
+    { name = "pytest", specifier = ">=8.3.4" },
+    { name = "ruff", specifier = ">=0.8.3" },
+    { name = "watchfiles", specifier = ">=1.0.3" },
 ]
 
 [[package]]

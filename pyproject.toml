@@ -10,21 +10,17 @@ readme = "README.md"
 
 [dependency-groups]
 dev = [
-    "jupyterlab>=4.1.5",
-    "ruff",
-    "watchfiles>=0.21.0",
-    "pytest",
     "inline-snapshot>=0.17.1",
+    "jupyterlab>=4.3.4",
+    "pytest>=8.3.4",
+    "ruff>=0.8.3",
+    "watchfiles>=1.0.3",
 ]
-
-[tool.hatch.envs.default.scripts]
-lint = ["ruff check {args:.}", "ruff format --check --diff {args:.}"]
-format = ["ruff format {args:.}", "ruff check --fix {args:.}"]
-test = ["pytest {args:.}"]
 
 [tool.ruff.lint]
 pydocstyle = { convention = "numpy" }
 select = ["ALL"]
+ignore = ["COM812", "ISC001"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*.py" = ["D", "S", "PLR", "ANN"]
