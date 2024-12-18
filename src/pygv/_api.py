@@ -39,7 +39,7 @@ def ref(genome: str) -> None:
     CONTEXT.genome = genome
 
 
-def _resolve_file_or_url(path_or_url: str | pathlib.Path):
+def _resolve_file_or_url(path_or_url: str | pathlib.Path) -> tuple[str, bool]:
     """Resolve a file path or URL to a URL.
 
     Parameters
@@ -54,7 +54,7 @@ def _resolve_file_or_url(path_or_url: str | pathlib.Path):
         a file resource is created and the URL is returned.
     """
     normalized = str(path_or_url)
-    if normalized.startswith("http") or normalized.startswith("https"):
+    if normalized.startswith(("http", "https")):
         return normalized, False
     path = pathlib.Path(normalized).resolve()
     if not path.is_file() or not path.exists():
@@ -64,7 +64,7 @@ def _resolve_file_or_url(path_or_url: str | pathlib.Path):
     return resource.url, True
 
 
-def track(t: TrackArgument, **kwargs) -> Track:
+def track(t: TrackArgument, **kwargs) -> Track:  # noqa: ANN003
     if isinstance(t, Track):
         return t
 
@@ -94,7 +94,8 @@ def track(t: TrackArgument, **kwargs) -> Track:
     if type_ == "variant" or filetype in {"vcf"}:
         return VariantTrack(url=url, index_url=index_url, name=name, **kwargs)
 
-    raise ValueError(f"Unsupported track or file type: {filetype}")
+    msg = f"Unsupported track or file type: {filetype}"
+    raise ValueError(msg)
 
 
 def browse(*tracks: TrackArgument) -> Browser:
@@ -111,6 +112,8 @@ def browse(*tracks: TrackArgument) -> Browser:
         The browser widget.
     """
     CONTEXT.current = Browser(
-        genome=CONTEXT.genome, locus=CONTEXT.locus, tracks=[track(t) for t in tracks]
+        genome=CONTEXT.genome,
+        locus=CONTEXT.locus,
+        tracks=[track(t) for t in tracks],
     )
     return CONTEXT.current

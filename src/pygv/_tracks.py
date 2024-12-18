@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import typing
 
 import msgspec
@@ -101,7 +103,7 @@ class AnnotationTrack(BaseTrack, rename="camel"):
 
     # Array of gff feature types to filter from display.
     filter_types: list[str] = msgspec.field(
-        default_factory=lambda: ["chromosome", "gene"]
+        default_factory=lambda: ["chromosome", "gene"],
     )
 
     # CSS color value for track features, e.g. "#ff0000" or "rgb(100,0,100)".
@@ -132,10 +134,10 @@ class WigTrack(BaseTrack):
     autoscale_group: str | None = None
 
     # Sets the minimum value for the data (y-axis) scale. Usually zero.
-    # min: int = 0
+    # min: int = 0  # noqa: ERA001
 
     # Sets the maximum value for the data (y-axis) scale. Ignored if autoscale = true.
-    # max: int | None = None
+    # max: int | None = None  # noqa: ERA001
 
     # Track color as as an "rgb(,,,)" string, a hex string, or css color name.
     color = "rgb(150,150,150)"
@@ -146,7 +148,7 @@ class WigTrack(BaseTrack):
     # Draw a horizontal line for each object in the given array:
     #   guide lines: [ {color: [color], y: [number], dotted: [bool]} ]
     #   Note: y value should be between min and max or it will not show.
-    # guide_lines: list[dict] = []
+    # guide_lines: list[dict] = []  # noqa: ERA001
 
     # Type of graph, either "bar" or "points"
     graph_type: typing.Literal["bar", "points"] = "bar"
