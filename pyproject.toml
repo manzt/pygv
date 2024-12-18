@@ -7,6 +7,7 @@ name = "pygv"
 version = "0.0.0"
 dependencies = ["anywidget>=0.9.3", "servir>=0.2.1", "msgspec>=0.18.6"]
 readme = "README.md"
+requires-python = ">=3.9"
 
 [dependency-groups]
 dev = [
