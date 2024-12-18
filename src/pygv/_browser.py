@@ -8,10 +8,11 @@ import msgspec
 import traitlets
 
 if TYPE_CHECKING:
-    from ._tracks import BaseTrack
+    from ._config import Config
+    from ._tracks import Track
 
 
-class _BrowserWidget(anywidget.AnyWidget):
+class BrowserWidget(anywidget.AnyWidget):
     _esm = pathlib.Path(__file__).parent / "static" / "widget.js"
     _css = pathlib.Path(__file__).parent / "static" / "widget.css"
     _genome = traitlets.Unicode().tag(sync=True)
@@ -23,20 +24,24 @@ class _BrowserWidget(anywidget.AnyWidget):
 
 
 class Browser:
-    def __init__(
-        self,
-        genome: str,
-        tracks: list[BaseTrack],
-        locus: str | None = None,
-    ) -> None:
-        self._widget = _BrowserWidget(_genome=genome, _locus=locus, _tracks=tracks)
+    def __init__(self, config: Config) -> None:
+        config = config.servable()  # ensure it is servable
+        self._widget = BrowserWidget(
+            _genome=config.genome,
+            _locus=config.locus,
+            _tracks=config.tracks,
+        )
 
     @property
     def genome(self) -> str:
         return self._widget._genome  # noqa: SLF001
 
     @property
-    def tracks(self) -> list[BaseTrack]:
+    def locus(self) -> str:
+        return self._widget._locus  # noqa: SLF001
+
+    @property
+    def tracks(self) -> list[Track]:
         return self._widget._tracks  # noqa: SLF001
 
     def _repr_mimebundle_(self, **kwargs) -> tuple[dict, dict] | None:  # noqa: ANN003

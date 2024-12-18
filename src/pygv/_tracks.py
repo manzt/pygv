@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import typing
 
 import msgspec
@@ -32,9 +30,6 @@ class BaseTrack(msgspec.Struct, rename="camel"):
     # file will be read.
     index_url: str | None = msgspec.field(default=None, name="indexURL")
 
-    # No default. If not specified, type is inferred from file format.
-    type: str | None = None
-
     # No default. If not specified, format is inferred from file name extension.
     format: str | None = None
 
@@ -55,9 +50,7 @@ class BaseTrack(msgspec.Struct, rename="camel"):
     auto_height: bool = False
 
     # Minimum height of track in pixels. Defaults to 50.
-    min_height: int = 50
-
-    # Maximum height of track in pixels. Defaults to 500.
+    min_height: int = 50  # Maximum height of track in pixels. Defaults to 500.
     max_height: int = 500
 
     # Maximum window size in base pairs for which indexed annotations or variants
@@ -66,15 +59,13 @@ class BaseTrack(msgspec.Struct, rename="camel"):
     visibility_window: int | None = None
 
 
-class AnnotationTrack(BaseTrack, rename="camel"):
+class AnnotationTrack(BaseTrack, tag="annotation"):
     """Represents non-quantitative genome annotations such as genes.
 
     Associated file formats: bed, gff, gff3, gtf, bedpe (and more).
 
     Ref: https://github.com/igvteam/igv.js/wiki/Annotation-Track
     """
-
-    type = "annotation"
 
     # Annotation track display mode.
     display_mode: typing.Literal["COLLAPSED", "EXPANDED", "SQUISHED"] = "COLLAPSED"
@@ -116,15 +107,13 @@ class AnnotationTrack(BaseTrack, rename="camel"):
     color_by: str | None = None
 
 
-class WigTrack(BaseTrack):
+class WigTrack(BaseTrack, tag="wig"):
     """Quantitative genomic data, such as ChIP peaks and alignment coverage.
 
     Associated file formats: wig, bigWig, bedGraph.
 
     Ref: https://github.com/igvteam/igv.js/wiki/Wig-Track
     """
-
-    type = "wig"
 
     # Autoscale track to maximum value in view
     autoscale: bool | None = None
@@ -161,15 +150,13 @@ class WigTrack(BaseTrack):
     window_function: typing.Literal["min", "max", "mean"] = "mean"
 
 
-class AlignmentTrack(BaseTrack):
+class AlignmentTrack(BaseTrack, tag="alignment"):
     """Represents alignment data such as BAM files.
 
     Associated file formats: bam, cram.
 
     Ref: https://github.com/igvteam/igv.js/wiki/Alignment-Track
     """
-
-    type = "alignment"
 
     # Show coverage depth track.
     show_coverage: bool = True
@@ -267,7 +254,7 @@ class AlignmentTrack(BaseTrack):
     max_tlen_percentile: float = 99.9
 
 
-class VariantTrack(BaseTrack, rename="camel"):
+class VariantTrack(BaseTrack, tag="variant"):
     """Represents variant data such as VCF files.
 
     Associated file formats: vcf.
