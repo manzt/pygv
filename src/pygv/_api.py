@@ -1,22 +1,15 @@
 from __future__ import annotations
 
 import dataclasses
+import json
 import pathlib
 import typing
 
-import servir
+from ._browser import Browser
+from ._config import Config, is_href
+from ._tracks import Track
 
-from ._tracks import AlignmentTrack, AnnotationTrack, Track, VariantTrack, WigTrack
-from ._widget import Browser
-
-__all__ = ["browse", "ref", "track"]
-
-
-_PROVIDER = servir.Provider()
-_RESOURCES = set()
-
-FilePathOrUrl = typing.Union[str, pathlib.Path]
-TrackArgument = typing.Union[FilePathOrUrl, tuple[FilePathOrUrl, FilePathOrUrl], Track]
+__all__ = ["Browser", "browse", "load", "loads", "locus", "ref", "track"]
 
 
 @dataclasses.dataclass
@@ -26,76 +19,43 @@ class Context:
     current: Browser | None = None
 
 
-CONTEXT = Context()
+_CONTEXT = Context()
+
+FilePathOrUrl = typing.Union[str, pathlib.Path]
+TrackArgument = typing.Union[
+    FilePathOrUrl,
+    tuple[FilePathOrUrl, FilePathOrUrl],
+    Track,
+]
 
 
 def locus(locus: str) -> None:
     """Set the initial locus for the browsers in this session."""
-    CONTEXT.locus = locus
+    _CONTEXT.locus = locus
 
 
 def ref(genome: str) -> None:
     """Set the reference genome for the browsers in this session."""
-    CONTEXT.genome = genome
+    _CONTEXT.genome = genome
 
 
-def _resolve_file_or_url(path_or_url: str | pathlib.Path) -> tuple[str, bool]:
-    """Resolve a file path or URL to a URL.
+def track(targ: TrackArgument | None = None, /, **kwargs) -> Track:  # noqa: ANN003
+    if isinstance(targ, Track):
+        return targ
 
-    Parameters
-    ----------
-    path_or_url : str | pathlib.Path
-        A file path or URL.
-
-    Returns
-    -------
-    str
-        A URL. If `path_or_url` is a URL, it is returned as-is, otherwise
-        a file resource is created and the URL is returned.
-    """
-    normalized = str(path_or_url)
-    if normalized.startswith(("http", "https")):
-        return normalized, False
-    path = pathlib.Path(normalized).resolve()
-    if not path.is_file() or not path.exists():
-        raise FileNotFoundError(path)
-    resource = _PROVIDER.create(path)
-    _RESOURCES.add(resource)
-    return resource.url, True
-
-
-def track(t: TrackArgument, **kwargs) -> Track:  # noqa: ANN003
-    if isinstance(t, Track):
-        return t
-
-    if isinstance(t, (str, pathlib.Path)):
-        url, is_local = _resolve_file_or_url(t)
-        index_url = None
-        name = pathlib.Path(t).name if is_local else url
+    if targ is None:
+        url = kwargs["url"]
+    elif isinstance(targ, (str, pathlib.Path)):
+        url = kwargs["url"] = str(targ)
+        kwargs["indexURL"] = None
     else:
-        url, is_local = _resolve_file_or_url(t[0])
-        index_url, _ = _resolve_file_or_url(t[1])
-        name = pathlib.Path(t[0]).name if is_local else url
+        url = kwargs["url"] = str(targ[0])
+        kwargs["indexURL"] = str(targ[1])
 
-    parts = url.split(".")
-    filetype = parts[-1].lower()
-    if filetype == "gz":
-        filetype = parts[-2].lower()
+    if "name" not in kwargs:
+        kwargs["name"] = url if is_href(url) else pathlib.Path(url).name
 
-    type_ = kwargs.pop("type", None)
-    name = kwargs.pop("name", name)
-
-    if type_ == "alignment" or filetype in {"bam", "cram"}:
-        return AlignmentTrack(url=url, index_url=index_url, name=name, **kwargs)
-    if type_ == "annotation" or filetype in {"bed", "gff", "gff3", "gtf", "bedpe"}:
-        return AnnotationTrack(url=url, index_url=index_url, name=name, **kwargs)
-    if type_ == "wig" or filetype in {"bigWig", "bw", "bg", "bedGraph"}:
-        return WigTrack(url=url, index_url=index_url, name=name, **kwargs)
-    if type_ == "variant" or filetype in {"vcf"}:
-        return VariantTrack(url=url, index_url=index_url, name=name, **kwargs)
-
-    msg = f"Unsupported track or file type: {filetype}"
-    raise ValueError(msg)
+    return Config.from_dict({"tracks": [kwargs]}).tracks[0]
 
 
 def browse(*tracks: TrackArgument) -> Browser:
@@ -111,9 +71,23 @@ def browse(*tracks: TrackArgument) -> Browser:
     Browser
         The browser widget.
     """
-    CONTEXT.current = Browser(
-        genome=CONTEXT.genome,
-        locus=CONTEXT.locus,
-        tracks=[track(t) for t in tracks],
+    _CONTEXT.current = Browser(
+        Config(
+            genome=_CONTEXT.genome,
+            locus=_CONTEXT.locus,
+            tracks=[track(t) for t in tracks],
+        ),
     )
-    return CONTEXT.current
+    return _CONTEXT.current
+
+
+def load(file: typing.IO[str]) -> Browser:
+    """Load an existing IGV configuration from a file-like."""
+    return loads(file.read())
+
+
+def loads(json_config: str) -> Browser:
+    """Load a JSON-encoded IGV configuration."""
+    config = json.loads(json_config)
+    _CONTEXT.current = Browser(Config.from_dict(config))
+    return _CONTEXT.current
