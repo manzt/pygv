@@ -9,12 +9,10 @@ import traitlets
 
 if TYPE_CHECKING:
     from ._config import Config
-    from ._tracks import Track
 
 
-class BrowserWidget(anywidget.AnyWidget):
+class Browser(anywidget.AnyWidget):
     _esm = pathlib.Path(__file__).parent / "static" / "widget.js"
-    _css = pathlib.Path(__file__).parent / "static" / "widget.css"
     _genome = traitlets.Unicode().tag(sync=True)
     _locus = traitlets.Unicode().tag(sync=True)
     _tracks = traitlets.List().tag(
@@ -22,27 +20,9 @@ class BrowserWidget(anywidget.AnyWidget):
         to_json=lambda x, _: msgspec.to_builtins(x),
     )
 
-
-class Browser:
     def __init__(self, config: Config) -> None:
-        config = config.servable()  # ensure it is servable
-        self._widget = BrowserWidget(
+        super().__init__(
             _genome=config.genome,
             _locus=config.locus,
             _tracks=config.tracks,
         )
-
-    @property
-    def genome(self) -> str:
-        return self._widget._genome  # noqa: SLF001
-
-    @property
-    def locus(self) -> str:
-        return self._widget._locus  # noqa: SLF001
-
-    @property
-    def tracks(self) -> list[Track]:
-        return self._widget._tracks  # noqa: SLF001
-
-    def _repr_mimebundle_(self, **kwargs) -> tuple[dict, dict] | None:  # noqa: ANN003
-        return self._widget._repr_mimebundle_(**kwargs)

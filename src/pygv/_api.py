@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import dataclasses
+import json
 import pathlib
 import typing
 
@@ -8,7 +9,7 @@ from ._browser import Browser
 from ._config import Config, is_href
 from ._tracks import Track
 
-__all__ = ["Browser", "browse", "locus", "ref", "track"]
+__all__ = ["Browser", "browse", "load", "loads", "locus", "ref", "track"]
 
 
 @dataclasses.dataclass
@@ -78,3 +79,15 @@ def browse(*tracks: TrackArgument) -> Browser:
         ),
     )
     return _CONTEXT.current
+
+
+def load(config: dict) -> Browser:
+    """Load an existing IGV configuration from Python builtins."""
+    _CONTEXT.current = Browser(Config.from_dict(config))
+    return _CONTEXT.current
+
+
+def loads(json_config: str) -> Browser:
+    """Load a JSON-encoded IGV configuration."""
+    config = json.loads(json_config)
+    return load(config)
