@@ -8,18 +8,14 @@ version = "0.0.0"
 dependencies = ["anywidget>=0.9.3", "servir>=0.2.1", "msgspec>=0.18.6"]
 readme = "README.md"
 
-[project.optional-dependencies]
+[dependency-groups]
 dev = [
-	"jupyterlab-vim>=4.1.3",
 	"jupyterlab>=4.1.5",
 	"ruff",
 	"watchfiles>=0.21.0",
 	"pytest",
 ]
 
-[tool.hatch.envs.default]
-features = ["dev"]
-uv = true
 
 [tool.hatch.envs.default.scripts]
 lint = ["ruff check {args:.}", "ruff format --check --diff {args:.}"]
