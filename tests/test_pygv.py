@@ -1,12 +1,11 @@
 from inline_snapshot import snapshot
 
-import pygv
 from pygv import Config
 from pygv._tracks import AlignmentTrack
 
 
 def test_loads_config():
-    config = pygv.Config.from_dict(
+    config = Config.from_dict(
         {
             "genome": "hg38",
             "locus": "chr8:127,736,588-127,739,371",

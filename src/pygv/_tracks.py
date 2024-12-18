@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import typing
 
 import msgspec
@@ -28,19 +30,19 @@ class BaseTrack(msgspec.Struct, rename="camel"):
     # URL to a file index, such as a BAM .bai, tabix .tbi, or tribble .idx file.
     # Notes: For indexed file access the index URL is required, if absent the entire
     # file will be read.
-    index_url: str | None = msgspec.field(default=None, name="indexURL")
+    index_url: typing.Union[str, None] = msgspec.field(default=None, name="indexURL")  # noqa: UP007
 
     # No default. If not specified, format is inferred from file name extension.
-    format: str | None = None
+    format: typing.Union[str, None] = None  # noqa: UP007
 
     # Flag provided to explicitly indicate the resource is not indexed.
     # If a resource is indexed the indexURL should be provided in which case
     # this flag is redundant. This flag can be used to load small BAM files
     # without an index by setting to false.
-    indexed: bool | None = None
+    indexed: typing.Union[bool, None] = None  # noqa: UP007
 
     # CSS color value for track features, e.g. "#ff0000" or "rgb(100,0,100)".
-    color: str | None = None
+    color: typing.Union[str, None] = None  # noqa: UP007
 
     # Initial height of track viewport in pixels. Defaults to 50.
     height: int = 50
@@ -56,7 +58,7 @@ class BaseTrack(msgspec.Struct, rename="camel"):
     # Maximum window size in base pairs for which indexed annotations or variants
     # are displayed. 1 MB for variants, 30 KB for alignments, whole chromosome for
     # other track types.
-    visibility_window: int | None = None
+    visibility_window: typing.Union[int, None] = None  # noqa: UP007
 
 
 class AnnotationTrack(BaseTrack, tag="annotation"):
@@ -77,7 +79,7 @@ class AnnotationTrack(BaseTrack, tag="annotation"):
     squished_row_height = 15
 
     # For GFF/GTF file formats. Name of column 9 property to be used for feature label.
-    name_field: str | None = None
+    name_field: typing.Union[str, None] = None  # noqa: UP007
 
     # Maximum number of rows of features to display.
     max_rows: int = 500
@@ -90,7 +92,7 @@ class AnnotationTrack(BaseTrack, tag="annotation"):
     # An array of field (column 9) names to be included in feature searches.
     # When searching for feature attributes spaces need to be escaped with a "+"
     # sign or percent encoded ("%20).
-    searchable_fields: list[str] | None = None
+    searchable_fields: typing.Union[list[str], None] = None  # noqa: UP007
 
     # Array of gff feature types to filter from display.
     filter_types: list[str] = msgspec.field(
@@ -101,10 +103,10 @@ class AnnotationTrack(BaseTrack, tag="annotation"):
     color = "rgb(0,0,150)"
 
     # If supplied, used for features on negative strand.
-    alt_color: str | None = None
+    alt_color: typing.Union[str, None] = None  # noqa: UP007
 
     # Used with GFF/GTF files. Name of column 9 attribute to color features by.
-    color_by: str | None = None
+    color_by: typing.Union[str, None] = None  # noqa: UP007
 
 
 class WigTrack(BaseTrack, tag="wig"):
@@ -116,11 +118,11 @@ class WigTrack(BaseTrack, tag="wig"):
     """
 
     # Autoscale track to maximum value in view
-    autoscale: bool | None = None
+    autoscale: typing.Union[bool, None] = None  # noqa: UP007
 
     # Identifier for an autoscale group. Tracks with the same identifier are
     # autoscaled together.
-    autoscale_group: str | None = None
+    autoscale_group: typing.Union[str, None] = None  # noqa: UP007
 
     # Sets the minimum value for the data (y-axis) scale. Usually zero.
     # min: int = 0  # noqa: ERA001
@@ -132,7 +134,7 @@ class WigTrack(BaseTrack, tag="wig"):
     color = "rgb(150,150,150)"
 
     # If supplied, used for negative values. See description of color field above.
-    alt_color: str | None = None
+    alt_color: typing.Union[str, None] = None  # noqa: UP007
 
     # Draw a horizontal line for each object in the given array:
     #   guide lines: [ {color: [color], y: [number], dotted: [bool]} ]
@@ -192,14 +194,14 @@ class AlignmentTrack(BaseTrack, tag="alignment"):
     pos_strand_color: str = "rgba(230, 150, 150, 0.75)"
 
     # Color of connector line between read pairs ("view as pairs" mode).
-    pair_connector_color: str | None = None
+    pair_connector_color: typing.Union[str, None] = None  # noqa: UP007
 
     # Alignment color option: one of "none", "strand", "firstOfPairStrand",
     # "pairOrientation", "tlen", "unexpectedPair", or "tag".
     color_by: str = "unexpectedPair"
 
     # Specific tag to color alignment by.
-    color_by_tag: str | None = None
+    color_by_tag: typing.Union[str, None] = None  # noqa: UP007
 
     # Specifies a special tag that explicitly encodes an r,g,b color value.
     bam_color_tag: str = "YC"
@@ -214,11 +216,11 @@ class AlignmentTrack(BaseTrack, tag="alignment"):
     alignment_row_height: int = 14
 
     # Readgroup ID value (tag 'RG').
-    readgroup: str | None = None
+    readgroup: typing.Union[str, None] = None  # noqa: UP007
 
     # Initial sort option. Supports various sorting strategies including by base,
     # strand, insert size, etc.
-    sort: str | None = None
+    sort: typing.Union[str, None] = None  # noqa: UP007
 
     # Show soft-clipped regions.
     show_soft_clips: bool = False
@@ -239,13 +241,13 @@ class AlignmentTrack(BaseTrack, tag="alignment"):
     deletion_text_color: str = "black"
 
     # Expected orientation of pairs, one of ff, fr, or rf.
-    pair_orientation: str | None = None
+    pair_orientation: typing.Union[str, None] = None  # noqa: UP007
 
     # Minimum expected absolute "TLEN" value.
-    min_tlen: int | None = None
+    min_tlen: typing.Union[int, None] = None  # noqa: UP007
 
     # Maximum expected absolute "TLEN" value.
-    max_tlen: int | None = None
+    max_tlen: typing.Union[int, None] = None  # noqa: UP007
 
     # The percentile threshold for expected insert size.
     min_tlen_percentile: float = 0.1
