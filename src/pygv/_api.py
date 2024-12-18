@@ -81,13 +81,13 @@ def browse(*tracks: TrackArgument) -> Browser:
     return _CONTEXT.current
 
 
-def load(config: dict) -> Browser:
-    """Load an existing IGV configuration from Python builtins."""
-    _CONTEXT.current = Browser(Config.from_dict(config))
-    return _CONTEXT.current
+def load(file: typing.IO[str]) -> Browser:
+    """Load an existing IGV configuration from a file-like."""
+    return loads(file.read())
 
 
 def loads(json_config: str) -> Browser:
     """Load a JSON-encoded IGV configuration."""
     config = json.loads(json_config)
-    return load(config)
+    _CONTEXT.current = Browser(Config.from_dict(config))
+    return _CONTEXT.current
