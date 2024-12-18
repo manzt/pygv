@@ -3,12 +3,12 @@ import typing
 import msgspec
 
 __all__ = [
-    "BaseTrack",
-    "AnnotationTrack",
-    "WigTrack",
     "AlignmentTrack",
-    "VariantTrack",
+    "AnnotationTrack",
+    "BaseTrack",
     "Track",
+    "VariantTrack",
+    "WigTrack",
 ]
 
 

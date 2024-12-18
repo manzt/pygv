@@ -9,7 +9,7 @@ import servir
 from ._tracks import AlignmentTrack, AnnotationTrack, Track, VariantTrack, WigTrack
 from ._widget import Browser
 
-__all__ = ["ref", "browse", "track"]
+__all__ = ["browse", "ref", "track"]
 
 
 _PROVIDER = servir.Provider()

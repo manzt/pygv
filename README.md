@@ -66,11 +66,14 @@ pygv.browse(
 
 ## development
 
-create a virtual environment and and install pygv in *editable* mode with the
-optional development dependencies:
+development requires [uv](https://astral.sh/uv)
 
 ```sh
-python -m venv .venv
-source .venv/bin/activate
-pip install -e ".[dev]"
+uv run jupyter lab # open notebook with editable install
+```
+
+```sh
+uv run pytest      # testing
+uv run ruff check  # linting
+uv run ruff format # formatting
 ```
