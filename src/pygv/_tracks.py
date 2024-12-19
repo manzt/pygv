@@ -791,13 +791,51 @@ class InteractTrack(BaseTrack, tag="interact"):
     """Direction of arcs ("UP" or "DOWN"). Default `"UP"`."""
 
     alpha: t.Union[float, UnsetType] = UNSET
-    """Alpha transparency to apply to arcs that extend beyond viewport. Default `0.5`.
+    """Alpha transparency to apply to arcs that extend beyond viewport.
 
-    Must be between `0` and `1`.
+    Must be between `0` and `1`. Default `0.5`.
     """
 
     thickness: t.Union[int, UnsetType] = UNSET
     """Line thickness. Default `2`."""
+
+
+class QtlTrack(BaseTrack, tag="qtl"):
+    """Displays xQTL data.
+
+    Associated file formats: qtl
+
+    Ref: https://igv.org/doc/igvjs/#tracks/QTL-Track
+
+    Example:
+    ```py
+    QtlTrack(
+        format="qtl",
+        name="B cell eQTL",
+        url="https://igv-genepattern-org.s3.amazonaws.com/test/qtl/B.cell_eQTL.tsv.gz",
+        index_url="https://igv-genepattern-org.s3.amazonaws.com/test/qtl/B.cell_eQTL.tsv.gz.tbi",
+        visibility_window=4_000_000,
+    )
+    ```
+    """
+
+    associated_file_formats: t.ClassVar[set[str]] = {"qtl"}
+    """File formats associated with the gwas type."""
+
+    min: t.Union[float, UnsetType] = UNSET
+    """Minimum value of y-axis in -log10 units. Default `3.5`."""
+
+    max: t.Union[float, UnsetType] = UNSET
+    """Maximum value of y-axis in -log10 units.
+
+    Optional, if not specified max is set as a percentile of values in view.
+    """
+
+    autoscale_percentile: t.Union[float, UnsetType] = UNSET
+    """Upper percentile for setting max value when autoscaling.
+
+    Number between `0` and `100`. Default `98`.
+    """
 
 
 Track = t.Union[
@@ -808,4 +846,5 @@ Track = t.Union[
     MutationTrack,
     SegmentedCopyNumberTrack,
     InteractTrack,
+    QtlTrack,
 ]
