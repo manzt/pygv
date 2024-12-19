@@ -7,7 +7,14 @@ from msgspec import UNSET, Struct, UnsetType, field
 __all__ = [
     "AlignmentTrack",
     "AnnotationTrack",
-    "BaseTrack",
+    "ArcTrack",
+    "CnvPytorTrack",
+    "InteractTrack",
+    "MergedTrack",
+    "MutationTrack",
+    "QtlTrack",
+    "SegmentedCopyNumberTrack",
+    "SpliceJunctionTrack",
     "Track",
     "VariantTrack",
     "WigTrack",
@@ -19,9 +26,6 @@ class BaseTrack(Struct, rename="camel", repr_omit_defaults=True, omit_defaults=T
 
     For a full configuration options, see the [IGV.js docs](https://igv.org/doc/igvjs/#tracks/Tracks)
     """
-
-    associated_file_formats: t.ClassVar[set[str]] = set()
-    """File formats associated with this track type."""
 
     name: str
     """Display name (label). Required."""
@@ -94,6 +98,9 @@ class BaseTrack(Struct, rename="camel", repr_omit_defaults=True, omit_defaults=T
     id: t.Union[str, UnsetType] = UNSET
     """An identifier for this track."""
 
+    associated_file_formats: t.ClassVar[set[str]] = field(default_factory=lambda: set())
+    """File formats associated with this track type."""
+
 
 class AnnotationTrack(BaseTrack, tag="annotation"):
     """Display views of genomic annotations.
@@ -126,13 +133,15 @@ class AnnotationTrack(BaseTrack, tag="annotation"):
     ```
     """
 
-    associated_file_formats: t.ClassVar[set[str]] = {
-        "bed",
-        "gff",
-        "gff3",
-        "gtf",
-        "bedpe",
-    }
+    associated_file_formats: t.ClassVar[set[str]] = field(
+        default_factory=lambda: {
+            "bed",
+            "gff",
+            "gff3",
+            "gtf",
+            "bedpe",
+        }
+    )
     """File formats associated with the annotation type."""
 
     display_mode: t.Union[t.Literal["COLLAPSED", "EXPANDED", "SQUISHED"], UnsetType] = (
@@ -220,7 +229,9 @@ class WigTrack(BaseTrack, tag="wig"):
     ```
     """
 
-    associated_file_formats: t.ClassVar[set[str]] = {"wig", "bigWig", "bedGraph"}
+    associated_file_formats: t.ClassVar[set[str]] = field(
+        default_factory=lambda: {"wig", "bigWig", "bedGraph"}
+    )
     """File formats associated with the wig type."""
 
     autoscale: t.Union[bool, None] = None
@@ -327,7 +338,9 @@ class AlignmentTrack(BaseTrack, tag="alignment"):
     ```
     """
 
-    associated_file_formats: t.ClassVar[set[str]] = {"bam", "cram"}
+    associated_file_formats: t.ClassVar[set[str]] = field(
+        default_factory=lambda: {"bam", "cram"}
+    )
     """File formats associated with the alignment type."""
 
     show_coverage: t.Union[bool, UnsetType] = UNSET
@@ -515,7 +528,9 @@ class VariantTrack(BaseTrack, tag="variant"):
     ```
     """
 
-    associated_file_formats: t.ClassVar[set[str]] = {"vcf"}
+    associated_file_formats: t.ClassVar[set[str]] = field(
+        default_factory=lambda: {"vcf"}
+    )
     """File formats associated with the variant type."""
 
     display_mode: t.Union[t.Literal["COLLAPSED", "EXPANDED", "SQUISHED"], UnsetType] = (
@@ -586,7 +601,9 @@ class MutationTrack(BaseTrack, tag="mut"):
     ```
     """
 
-    associated_file_formats: t.ClassVar[set[str]] = {"mut", "maf"}
+    associated_file_formats: t.ClassVar[set[str]] = field(
+        default_factory=lambda: {"mut", "maf"}
+    )
     """File formats associated with the mut type."""
 
     display_mode: t.Union[t.Literal["EXPANDED", "SQUISHED", "COLLAPSED"], UnsetType] = (
@@ -653,7 +670,9 @@ class SegmentedCopyNumberTrack(BaseTrack, tag="seg"):
     ```
     """
 
-    associated_file_formats: t.ClassVar[set[str]] = {"seg"}
+    associated_file_formats: t.ClassVar[set[str]] = field(
+        default_factory=lambda: {"seg"}
+    )
     """File formats associated with the seg type."""
 
     display_mode: t.Union[t.Literal["EXPANDED", "SQUISHED", "FILL"], UnsetType] = UNSET
@@ -701,7 +720,9 @@ class GwasTrack(BaseTrack, tag="gwas"):
     ```
     """
 
-    associated_file_formats: t.ClassVar[set[str]] = {"bed", "gwas"}
+    associated_file_formats: t.ClassVar[set[str]] = field(
+        default_factory=lambda: {"bed", "gwas"}
+    )
     """File formats associated with the gwas type."""
 
     min: t.Union[int, UnsetType] = UNSET
@@ -776,7 +797,9 @@ class InteractTrack(BaseTrack, tag="interact"):
     ```
     """
 
-    associated_file_formats: t.ClassVar[set[str]] = {"bedpe", "interact", "bigInteract"}
+    associated_file_formats: t.ClassVar[set[str]] = field(
+        default_factory=lambda: {"bedpe", "interact", "bigInteract"}
+    )
     """File formats associated with the gwas type."""
 
     arc_type: t.Union[
@@ -822,7 +845,9 @@ class QtlTrack(BaseTrack, tag="qtl"):
     ```
     """
 
-    associated_file_formats: t.ClassVar[set[str]] = {"qtl"}
+    associated_file_formats: t.ClassVar[set[str]] = field(
+        default_factory=lambda: {"qtl"}
+    )
     """File formats associated with the gwas type."""
 
     min: t.Union[float, UnsetType] = UNSET
@@ -875,7 +900,9 @@ class SpliceJunctionTrack(BaseTrack, tag="junction"):
     ```
     """
 
-    associated_file_formats: t.ClassVar[set[str]] = {"bed"}
+    associated_file_formats: t.ClassVar[set[str]] = field(
+        default_factory=lambda: {"bed"}
+    )
     """File formats associated with the splice junction track type."""
 
     # Display Options
@@ -989,7 +1016,9 @@ class CnvPytorTrack(BaseTrack, tag="cnvpytor"):
     ```
     """
 
-    associated_file_formats: t.ClassVar[set[str]] = {"pytor", "vcf"}
+    associated_file_formats: t.ClassVar[set[str]] = field(
+        default_factory=lambda: {"pytor", "vcf"}
+    )
     """File formats associated with the splice cnvpytor track type."""
 
     signal_name: t.Union[t.Literal["rd_snp", "rd", "snp"], UnsetType] = field(
@@ -1064,6 +1093,31 @@ class MergedTrack(BaseTrack, tag="merged"):
     """
 
 
+class ArcTrack(BaseTrack, tag="arc"):
+    """Displays RNA secondary structures in arcs connecting base pairs.
+
+    Associated file formats: bp, bed
+
+    Ref: https://igv.org/doc/igvjs/#tracks/Arc-Track
+
+    Alternative structures, where one nucleotide is involved in more than one base pair,
+    and pseudo knots, where arcs cross, can be accommodated.
+
+    Example:
+    ```py
+    ArcTrack(format="bp", name="RNA Struct BP", url="example.bp")
+    ```
+    """
+
+    associated_file_formats: t.ClassVar[set[str]] = field(
+        default_factory=lambda: {"bp", "bed"}
+    )
+    """File formats associated with the arc type."""
+
+    arc_orientation: t.Union[t.Literal["UP", "DOWN"], UnsetType] = UNSET
+    """Direction of arcs ("UP" or "DOWN"). Default `"UP"`."""
+
+
 Track = t.Union[
     AnnotationTrack,
     WigTrack,
@@ -1075,4 +1129,6 @@ Track = t.Union[
     QtlTrack,
     SpliceJunctionTrack,
     CnvPytorTrack,
+    MergedTrack,
+    ArcTrack,
 ]
