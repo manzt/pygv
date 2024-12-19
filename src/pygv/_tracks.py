@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-import typing
+import typing as t
 
-import msgspec
+from msgspec import Struct, UNSET, UnsetType, field
 
 __all__ = [
     "AlignmentTrack",
@@ -14,51 +14,79 @@ __all__ = [
 ]
 
 
-class BaseTrack(msgspec.Struct, rename="camel"):
+class BaseTrack(Struct, rename="camel"):
     """Represents a browser track.
 
-    Only the minimal set of properties are included here. For a full list of
-    properties see the IGV.js documentation at https://github.com/igvteam/igv.js/wiki/Tracks-2.0.
+    For a full configuration options, see the [IGV.js docs](https://igv.org/doc/igvjs/#tracks/Tracks)
     """
 
-    # Display name (label). Required.
     name: str
+    """Display name (label). Required."""
 
-    # URL to the track data resource, such as a file or webservice, or a data URI.
     url: str
+    """URL to the track data resource, such as a file or webservice, or a data URI."""
 
-    # URL to a file index, such as a BAM .bai, tabix .tbi, or tribble .idx file.
-    # Notes: For indexed file access the index URL is required, if absent the entire
-    # file will be read.
-    index_url: typing.Union[str, None] = msgspec.field(default=None, name="indexURL")  # noqa: UP007
+    index_url: t.Union[str, UnsetType] = field(default=UNSET, name="indexURL")  # noqa: UP007
+    """URL to a file index, such as a BAM .bai, tabix .tbi, or tribble .idx file.
 
-    # No default. If not specified, format is inferred from file name extension.
-    format: typing.Union[str, None] = None  # noqa: UP007
+    For indexed file access the index URL is required, if absent the entire file
+    will be read.
+    """
 
-    # Flag provided to explicitly indicate the resource is not indexed.
-    # If a resource is indexed the indexURL should be provided in which case
-    # this flag is redundant. This flag can be used to load small BAM files
-    # without an index by setting to false.
-    indexed: typing.Union[bool, None] = None  # noqa: UP007
+    source_type: t.Union[t.Literal["file", "htsget", "custom"], UnsetType] = UNSET  # noqa: UP007
+    """Type of data source."""
 
-    # CSS color value for track features, e.g. "#ff0000" or "rgb(100,0,100)".
-    color: typing.Union[str, None] = None  # noqa: UP007
+    format: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    """No default. If not specified, format is inferred from file name extension."""
 
-    # Initial height of track viewport in pixels. Defaults to 50.
-    height: int = 50
+    indexed: t.Union[bool, UnsetType] = UNSET  # noqa: UP007
+    """Explicitly indicate whether the resource is indexed.
 
-    # If true, then track height is adjusted dynamically, within the bounds set by
-    # minHeight and maxHeight, to accommodate features in view. Defaults to False.
-    auto_height: bool = False
+    This flag is redundant if `index_url` is provided. It can be used to load small
+    BAM files without an index by setting to `False`
+    """
 
-    # Minimum height of track in pixels. Defaults to 50.
-    min_height: int = 50  # Maximum height of track in pixels. Defaults to 500.
-    max_height: int = 500
+    order: t.Union[int, UnsetType] = UNSET  # noqa: UP007
+    """Integer value specifying relative order of track position on the screen.
 
-    # Maximum window size in base pairs for which indexed annotations or variants
-    # are displayed. 1 MB for variants, 30 KB for alignments, whole chromosome for
-    # other track types.
-    visibility_window: typing.Union[int, None] = None  # noqa: UP007
+    To pin a track to the bottom use a very large value.
+    If no order is specified, tracks appear in order of their addition.
+    """
+
+    color: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    """CSS color value for track features, e.g. "#ff0000" or "rgb(100,0,100)"."""
+
+    height: t.Union[int, UnsetType] = UNSET  # noqa: UP007
+    """Initial height of track viewport in pixels. Default 50."""
+
+    min_height: t.Union[int, UnsetType] = UNSET  # noqa: UP007
+    """Minimum height of track in pixels. Default 50."""
+
+    max_height: t.Union[int, UnsetType] = UNSET  # noqa: UP007
+    """Maximum height of track in pixels. Default 500."""
+
+    visibility_window: t.Union[int, UnsetType] = UNSET  # noqa: UP007
+    """Maximum window size in base pairs for which indexed annotations or
+    variants are displayed.
+
+    1 MB for variants, 30 KB for alignments, whole chromosome for
+    other track types.
+    """
+
+    removable: t.Union[bool, UnsetType] = UNSET  # noqa: UP007
+    """If true a "remove" item is included in the track menu. Default `True`."""
+
+    headers: t.Union[dict[str, str], UnsetType] = UNSET  # noqa: UP007
+    """HTTP headers to include with each request.
+
+    For example `{"Authorization": "Bearer cn389ncoiwuencr"}`.
+    """
+
+    oauth_token: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    """OAuth token, or function returning an OAuth token.
+
+    The value will be included as a Bearer token with each request.
+    """
 
 
 class AnnotationTrack(BaseTrack, tag="annotation"):
@@ -70,7 +98,7 @@ class AnnotationTrack(BaseTrack, tag="annotation"):
     """
 
     # Annotation track display mode.
-    display_mode: typing.Literal["COLLAPSED", "EXPANDED", "SQUISHED"] = "COLLAPSED"
+    display_mode: t.Literal["COLLAPSED", "EXPANDED", "SQUISHED"] = "COLLAPSED"
 
     # Height of each row of features in "EXPANDED" mode.
     expanded_row_height = 30
