@@ -104,7 +104,7 @@ class AnnotationTrack(BaseTrack, tag="annotation"):
     AnnotationTrack(
         name="Color by attribute biotype",
         format="gff3",
-        display_mode="expanded",
+        display_mode="EXPANDED",
         height=300,
         url="https://s3.amazonaws.com/igv.org.genomes/hg38/Homo_sapiens.GRCh38.94.chr.gff3.gz",
         index_url="https://s3.amazonaws.com/igv.org.genomes/hg38/Homo_sapiens.GRCh38.94.chr.gff3.gz.tbi",
@@ -558,4 +558,29 @@ class VariantTrack(BaseTrack, tag="variant"):
     """CSS color for homozygous reference calls. Default `"rgb(200, 200, 200)"`."""
 
 
-Track = t.Union[AnnotationTrack, WigTrack, AlignmentTrack, VariantTrack]
+class MutationTrack(BaseTrack, tag="mut"):
+    """Displays data from the National Cancer Institute's "mut" and "maf" file formats.
+
+    Associated file formats: mut, maf.
+
+    Ref: https://igv.org/doc/igvjs/#tracks/Mutation-Track
+
+    Example:
+    ```py
+    MutationTrack(
+        format="maf",
+        url="https://s3.amazonaws.com/igv.org.demo/TCGA.BRCA.mutect.995c0111-d90b-4140-bee7-3845436c3b42.DR-10.0.somatic.maf.gz",
+        indexed=False,
+        height=700,
+        display_mode="EXPANDED",
+    )
+    ```
+    """
+
+    display_mode: t.Union[t.Literal["EXPANDED", "SQUISHED", "COLLAPSED"], UnsetType] = (
+        UNSET
+    )
+    """The track display mode. Default `"EXPANDED"`."""
+
+
+Track = t.Union[AnnotationTrack, WigTrack, AlignmentTrack, VariantTrack, MutationTrack]
