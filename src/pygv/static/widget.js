@@ -1,4 +1,4 @@
-import igv from "https://esm.sh/igv@2.15.11";
+import igv from "https://esm.sh/igv@3.1.2";
 
 /** @typedef {{ _genome: string, _tracks: Record<string, unknown>[], _locus: string }} Model */
 
@@ -9,7 +9,6 @@ async function render({ model, el }) {
     locus: model.get("_locus"),
     tracks: model.get("_tracks"),
   });
-  globalThis.browser = browser;
   return () => {
     igv.removeBrowser(browser);
   };
