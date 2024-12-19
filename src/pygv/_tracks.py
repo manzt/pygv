@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import typing as t
 
-from msgspec import Struct, UNSET, UnsetType, field
+from msgspec import UNSET, Struct, UnsetType, field
 
 __all__ = [
     "AlignmentTrack",
@@ -14,11 +14,14 @@ __all__ = [
 ]
 
 
-class BaseTrack(Struct, rename="camel"):
+class BaseTrack(Struct, rename="camel", repr_omit_defaults=True, omit_defaults=True):
     """Represents a browser track.
 
     For a full configuration options, see the [IGV.js docs](https://igv.org/doc/igvjs/#tracks/Tracks)
     """
+
+    associated_file_formats: t.ClassVar[set[str]] = set()
+    """File formats associated with this track type."""
 
     name: str
     """Display name (label). Required."""
@@ -90,94 +93,162 @@ class BaseTrack(Struct, rename="camel"):
 
 
 class AnnotationTrack(BaseTrack, tag="annotation"):
-    """Represents non-quantitative genome annotations such as genes.
+    """Display views of genomic annotations.
 
     Associated file formats: bed, gff, gff3, gtf, bedpe (and more).
 
-    Ref: https://github.com/igvteam/igv.js/wiki/Annotation-Track
+    Ref: https://igv.org/doc/igvjs/#tracks/Annotation-Track
     """
 
-    # Annotation track display mode.
-    display_mode: t.Literal["COLLAPSED", "EXPANDED", "SQUISHED"] = "COLLAPSED"
+    associated_file_formats: t.ClassVar[set[str]] = {
+        "bed",
+        "gff",
+        "gff3",
+        "gtf",
+        "bedpe",
+    }
+    """File formats associated with the annotation type."""
 
-    # Height of each row of features in "EXPANDED" mode.
-    expanded_row_height = 30
-
-    # Height of each row of features in "SQUISHED" mode
-    squished_row_height = 15
-
-    # For GFF/GTF file formats. Name of column 9 property to be used for feature label.
-    name_field: typing.Union[str, None] = None  # noqa: UP007
-
-    # Maximum number of rows of features to display.
-    max_rows: int = 500
-
-    # If true, feature names for this track can be searched for. Use this option with
-    # caution, it is memory intensive. This option will not work with indexed tracks.
-    searchable: bool = False
-
-    # For use with the searchable option in conjunction with GFF files.
-    # An array of field (column 9) names to be included in feature searches.
-    # When searching for feature attributes spaces need to be escaped with a "+"
-    # sign or percent encoded ("%20).
-    searchable_fields: typing.Union[list[str], None] = None  # noqa: UP007
-
-    # Array of gff feature types to filter from display.
-    filter_types: list[str] = msgspec.field(
-        default_factory=lambda: ["chromosome", "gene"],
+    display_mode: t.Union[t.Literal["COLLAPSED", "EXPANDED", "SQUISHED"], UnsetType] = (  # noqa: UP007
+        UNSET
     )
+    """Annotation track display mode. Default `"COLLAPSED"`."""
 
-    # CSS color value for track features, e.g. "#ff0000" or "rgb(100,0,100)".
-    color = "rgb(0,0,150)"
+    expanded_row_height: t.Union[int, UnsetType] = UNSET  # noqa: UP007
+    """Height of each row of features in `"EXPANDED"` mode. Default `30`."""
 
-    # If supplied, used for features on negative strand.
-    alt_color: typing.Union[str, None] = None  # noqa: UP007
+    squished_row_height: t.Union[int, UnsetType] = UNSET  # noqa: UP007
+    """Height of each row of features in `"SQUISHED"` mode. Default `15`."""
 
-    # Used with GFF/GTF files. Name of column 9 attribute to color features by.
-    color_by: typing.Union[str, None] = None  # noqa: UP007
+    name_field: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    """For GFF/GTF file formats. Name of column 9 to be used for feature label."""
+
+    max_rows: t.Union[int, UnsetType] = UNSET  # noqa: UP007
+    """Maximum number of rows of features to display. Default `500`."""
+
+    searchable: t.Union[bool, UnsetType] = UNSET  # noqa: UP007
+    """Whether feature names for this track can be searched. Default `False`.
+
+    Does not work for indexed tracks. Use with caution; it is memory intensive.
+    """
+
+    searchable_fields: t.Union[list[str], UnsetType] = UNSET  # noqa: UP007
+    """Field (column 9) names to be included in feature searches.
+
+    For use with the `searchable` option in conjunction with GFF files.
+
+    When searching for feature attributes spaces need to be escaped with a "+"
+    sign or percent encoded ("%20).
+    """
+
+    filter_types: t.Union[list[str], UnsetType] = UNSET  # noqa: UP007
+    """GFF feature types to filter from display. Default `["chromosome", "gene"]`."""
+
+    color: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    """CSS color value for features. Default `"rgb(0,0,150)"` (i.e. `"#000096"`)."""
+
+    alt_color: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    """If supplied, used for features on negative strand."""
+
+    color_by: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    """Used with GFF/GTF files. Name of column 9 attribute to color features by."""
+
+    color_table: t.Union[dict[str, str], UnsetType] = UNSET  # noqa: UP007
+    """Maps attribute values to CSS colors.
+
+    Used in conjunction with the `color_by` to assign specific colors to attributes.
+
+    Example:
+
+    ```py
+    AnnotationTrack(
+        name="Color by attribute biotype",
+        format="gff3",
+        display_mode="expanded",
+        height=300,
+        url="https://s3.amazonaws.com/igv.org.genomes/hg38/Homo_sapiens.GRCh38.94.chr.gff3.gz",
+        index_url="https://s3.amazonaws.com/igv.org.genomes/hg38/Homo_sapiens.GRCh38.94.chr.gff3.gz.tbi",
+        visibility_window=1000000,
+        color_by="biotype",
+        color_table={
+            "antisense": "blueviolet",
+            "protein_coding": "blue",
+            "retained_intron": "rgb(0, 150, 150)",
+            "processed_transcript": "purple",
+            "processed_pseudogene": "#7fff00",
+            "unprocessed_pseudogene": "#d2691e",
+            "*": "black"
+        }
+    )
+    ```
+    """
+
+
+class GuideLine(Struct):
+    """Represents a horizontal guide line."""
+
+    color: str
+    """A CSS color value."""
+    dotted: bool
+    """Whether the line should be dashed."""
+    y: int
+    """The y position. Should be between min and max."""
 
 
 class WigTrack(BaseTrack, tag="wig"):
-    """Quantitative genomic data, such as ChIP peaks and alignment coverage.
+    """Displays quantititive data as either a bar chart, line plot, or points.
 
     Associated file formats: wig, bigWig, bedGraph.
 
-    Ref: https://github.com/igvteam/igv.js/wiki/Wig-Track
+    Ref: https://igv.org/doc/igvjs/#tracks/Wig-Track/
     """
 
-    # Autoscale track to maximum value in view
-    autoscale: typing.Union[bool, None] = None  # noqa: UP007
+    associated_file_formats: t.ClassVar[set[str]] = {"wig", "bigWig", "bedGraph"}
+    """File formats associated with the wig type."""
 
-    # Identifier for an autoscale group. Tracks with the same identifier are
-    # autoscaled together.
-    autoscale_group: typing.Union[str, None] = None  # noqa: UP007
+    autoscale: t.Union[bool, None] = None  # noqa: UP007
+    """Autoscale track to maximum value in view."""
 
-    # Sets the minimum value for the data (y-axis) scale. Usually zero.
-    # min: int = 0  # noqa: ERA001
+    autoscale_group: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    """An identifier for an autoscale group.
 
-    # Sets the maximum value for the data (y-axis) scale. Ignored if autoscale = true.
-    # max: int | None = None  # noqa: ERA001
+    Tracks with the same identifier are autoscaled together.
+    """
 
-    # Track color as as an "rgb(,,,)" string, a hex string, or css color name.
-    color = "rgb(150,150,150)"
+    min: t.Union[int, UnsetType] = UNSET  # noqa: UP007
+    """Minimum value for the data (y-axis) scale. Usually zero."""
 
-    # If supplied, used for negative values. See description of color field above.
-    alt_color: typing.Union[str, None] = None  # noqa: UP007
+    max: t.Union[int, UnsetType] = UNSET  # noqa: UP007
+    """Maximum value for the data (y-axis) scale. Ignored if `autoscale` is `True`."""
 
-    # Draw a horizontal line for each object in the given array:
-    #   guide lines: [ {color: [color], y: [number], dotted: [bool]} ]
-    #   Note: y value should be between min and max or it will not show.
-    # guide_lines: list[dict] = []  # noqa: ERA001
+    color: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    """CSS color value. Default `"rgb(150,150,150)"`."""
 
-    # Type of graph, either "bar" or "points"
-    graph_type: typing.Literal["bar", "points"] = "bar"
+    alt_color: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    """If supplied, used for negative values."""
 
-    # If true, track is drawn "upside down" with zero at top
-    flip_axis: bool = False
+    color_scale: t.Union[dict, UnsetType] = UNSET  # noqa: UP007
+    """Color scale for heatmap (graphType = "heatmap" ).
 
-    # Applicable to tracks created from bigwig and tdf files. Governs how data is
-    # summarized when zooming out.
-    window_function: typing.Literal["min", "max", "mean"] = "mean"
+    Ref: https://igv.org/doc/igvjs/#tracks/Wig-Track/#color-scale-objects
+    """
+
+    guide_lines: t.Union[list[GuideLine], UnsetType] = UNSET  # noqa: UP007
+    """Draw a horizontal line for each object in the given array."""
+
+    graph_type: t.Union[t.Literal["bar", "points", "heatmap", "line"], UnsetType] = (  # noqa: UP007
+        UNSET
+    )
+    """Type of graph. Default `"bar"`."""
+
+    flip_axis: t.Union[bool, UnsetType] = UNSET  # noqa: UP007
+    """Whether the track is drawn "upside down" with zero at top. Default `False`."""
+
+    window_function: t.Union[t.Literal["min", "max", "mean"], UnsetType] = UNSET  # noqa: UP007
+    """Governs how data is summarized when zooming out. Default `"mean"`.
+
+    Applicable to tracks created from bigwig and tdf files.
+    """
 
 
 class AlignmentTrack(BaseTrack, tag="alignment"):
