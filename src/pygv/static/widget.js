@@ -1,4 +1,4 @@
-import igv from "https://esm.sh/igv@2.15.11";
+import igv from "https://esm.sh/igv@3.1.0";
 
 /** @typedef {{ _genome: string, _tracks: Record<string, unknown>[], _locus: string }} Model */
 
