@@ -176,6 +176,12 @@ def test_seg() -> None:
                     name="Explicit Samples",
                     format="seg",
                     height=100,
+                    samples=[
+                        "TCGA-06-0168-01A-02D-0236-01",
+                        "TCGA-02-0115-01A-01D-0193-01",
+                        "TCGA-02-2485-01A-01D-0784-01",
+                        "TCGA-06-0151-01A-01D-0236-01",
+                    ],
                 ),
                 SegmentedCopyNumberTrack(
                     url="https://s3.amazonaws.com/igv.org.demo/GBM-TP.seg.gz",

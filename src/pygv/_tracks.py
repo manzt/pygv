@@ -98,6 +98,9 @@ class BaseTrack(Struct, rename="camel", repr_omit_defaults=True, omit_defaults=T
     id: t.Union[str, UnsetType] = UNSET
     """An identifier for this track."""
 
+    samples: t.Union[list[str], UnsetType] = UNSET
+    """Sample names."""
+
 
 class AnnotationTrack(BaseTrack, tag="annotation"):
     """Display views of genomic annotations.
