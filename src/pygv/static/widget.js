@@ -9,7 +9,6 @@ async function render({ model, el }) {
     locus: model.get("_locus"),
     tracks: model.get("_tracks"),
   });
-  globalThis.browser = browser;
   return () => {
     igv.removeBrowser(browser);
   };
