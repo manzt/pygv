@@ -37,7 +37,7 @@ class Config(msgspec.Struct):
 
     def servable(self) -> "Config":
         """Returns a new config with tracks that are ensured to be servable."""  # noqa: D401
-        copy = msgspec.from_builtins(msgspec.to_builtins(self), type=Config)
+        copy = msgspec.convert(msgspec.to_builtins(self), type=Config)
 
         for t in copy.tracks:
             t.url = resolve_file_or_url(t.url)
