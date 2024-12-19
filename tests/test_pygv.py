@@ -6,7 +6,13 @@ from inline_snapshot import snapshot
 
 from pygv import Config
 from pygv._api import load
-from pygv._tracks import AlignmentTrack, MergedTrack, SegmentedCopyNumberTrack, WigTrack
+from pygv._tracks import (
+    AlignmentTrack,
+    AnnotationTrack,
+    MergedTrack,
+    SegmentedCopyNumberTrack,
+    WigTrack,
+)
 
 
 @pytest.fixture
@@ -118,7 +124,7 @@ def test_merged() -> None:
     )
 
 
-def test() -> None:
+def test_seg() -> None:
     assert Config.from_dict(
         {
             "genome": "hg19",
@@ -188,6 +194,71 @@ def test() -> None:
                     index_url="https://s3.amazonaws.com/igv.org.demo/GBM-TP.seg.gz.tbi",
                     format="seg",
                     visibility_window="100000000",
+                ),
+            ],
+        )
+    )
+
+
+def test_basic_config():
+    assert Config.from_dict(
+        {
+            "genome": "hg19",
+            "locus": "chr1:155,160,475-155,184,282",
+            "tracks": [
+                {
+                    "url": "https://s3.amazonaws.com/igv.org.demo/GBM-TP.seg.gz",
+                    "name": "GBM Copy # (TCGA Broad GDAC)",
+                },
+                {
+                    "type": "annotation",
+                    "format": "bed",
+                    "url": "https://data.broadinstitute.org/igvdata/annotations/hg19/dbSnp/snp137.hg19.bed.gz",
+                    "indexURL": "https://data.broadinstitute.org/igvdata/annotations/hg19/dbSnp/snp137.hg19.bed.gz.tbi",
+                    "visibilityWindow": 200_000,
+                    "name": "dbSNP 137",
+                },
+                {
+                    "type": "wig",
+                    "format": "bigwig",
+                    "url": "https://s3.amazonaws.com/igv.broadinstitute.org/data/hg19/encode/wgEncodeBroadHistoneGm12878H3k4me3StdSig.bigWig",
+                    "name": "Gm12878H3k4me3",
+                },
+                {
+                    "type": "alignment",
+                    "format": "bam",
+                    "url": "https://1000genomes.s3.amazonaws.com/phase3/data/HG02450/alignment/HG02450.mapped.ILLUMINA.bwa.ACB.low_coverage.20120522.bam",
+                    "indexURL": "https://1000genomes.s3.amazonaws.com/phase3/data/HG02450/alignment/HG02450.mapped.ILLUMINA.bwa.ACB.low_coverage.20120522.bam.bai",
+                    "name": "HG02450",
+                },
+            ],
+        }
+    ) == snapshot(
+        Config(
+            genome="hg19",
+            locus="chr1:155,160,475-155,184,282",
+            tracks=[
+                SegmentedCopyNumberTrack(
+                    url="https://s3.amazonaws.com/igv.org.demo/GBM-TP.seg.gz",
+                    name="GBM Copy # (TCGA Broad GDAC)",
+                ),
+                AnnotationTrack(
+                    url="https://data.broadinstitute.org/igvdata/annotations/hg19/dbSnp/snp137.hg19.bed.gz",
+                    name="dbSNP 137",
+                    index_url="https://data.broadinstitute.org/igvdata/annotations/hg19/dbSnp/snp137.hg19.bed.gz.tbi",
+                    format="bed",
+                    visibility_window=200000,
+                ),
+                WigTrack(
+                    url="https://s3.amazonaws.com/igv.broadinstitute.org/data/hg19/encode/wgEncodeBroadHistoneGm12878H3k4me3StdSig.bigWig",
+                    name="Gm12878H3k4me3",
+                    format="bigwig",
+                ),
+                AlignmentTrack(
+                    url="https://1000genomes.s3.amazonaws.com/phase3/data/HG02450/alignment/HG02450.mapped.ILLUMINA.bwa.ACB.low_coverage.20120522.bam",
+                    name="HG02450",
+                    index_url="https://1000genomes.s3.amazonaws.com/phase3/data/HG02450/alignment/HG02450.mapped.ILLUMINA.bwa.ACB.low_coverage.20120522.bam.bai",
+                    format="bam",
                 ),
             ],
         )
