@@ -98,6 +98,29 @@ class AnnotationTrack(BaseTrack, tag="annotation"):
     Associated file formats: bed, gff, gff3, gtf, bedpe (and more).
 
     Ref: https://igv.org/doc/igvjs/#tracks/Annotation-Track
+
+    Example:
+    ```py
+    AnnotationTrack(
+        name="Color by attribute biotype",
+        format="gff3",
+        display_mode="expanded",
+        height=300,
+        url="https://s3.amazonaws.com/igv.org.genomes/hg38/Homo_sapiens.GRCh38.94.chr.gff3.gz",
+        index_url="https://s3.amazonaws.com/igv.org.genomes/hg38/Homo_sapiens.GRCh38.94.chr.gff3.gz.tbi",
+        visibility_window=1000000,
+        color_by="biotype",
+        color_table={
+            "antisense": "blueviolet",
+            "protein_coding": "blue",
+            "retained_intron": "rgb(0, 150, 150)",
+            "processed_transcript": "purple",
+            "processed_pseudogene": "#7fff00",
+            "unprocessed_pseudogene": "#d2691e",
+            "*": "black"
+        }
+    )
+    ```
     """
 
     associated_file_formats: t.ClassVar[set[str]] = {
@@ -157,30 +180,6 @@ class AnnotationTrack(BaseTrack, tag="annotation"):
     """Maps attribute values to CSS colors.
 
     Used in conjunction with the `color_by` to assign specific colors to attributes.
-
-    Example:
-
-    ```py
-    AnnotationTrack(
-        name="Color by attribute biotype",
-        format="gff3",
-        display_mode="expanded",
-        height=300,
-        url="https://s3.amazonaws.com/igv.org.genomes/hg38/Homo_sapiens.GRCh38.94.chr.gff3.gz",
-        index_url="https://s3.amazonaws.com/igv.org.genomes/hg38/Homo_sapiens.GRCh38.94.chr.gff3.gz.tbi",
-        visibility_window=1000000,
-        color_by="biotype",
-        color_table={
-            "antisense": "blueviolet",
-            "protein_coding": "blue",
-            "retained_intron": "rgb(0, 150, 150)",
-            "processed_transcript": "purple",
-            "processed_pseudogene": "#7fff00",
-            "unprocessed_pseudogene": "#d2691e",
-            "*": "black"
-        }
-    )
-    ```
     """
 
 
@@ -201,6 +200,21 @@ class WigTrack(BaseTrack, tag="wig"):
     Associated file formats: wig, bigWig, bedGraph.
 
     Ref: https://igv.org/doc/igvjs/#tracks/Wig-Track/
+
+    Example:
+    ```py
+    WigTrack(
+      name="CTCF",
+      url="https://www.encodeproject.org/files/ENCFF356YES/@@download/ENCFF356YES.bigWig",
+      min="0",
+      max="30",
+      color="rgb(0, 0, 150)",
+      guide_lines=[
+        GuideLine(color="green", dotted=True, y=25),
+        GuideLine(color="red", dotted=False, y=5),
+      ]
+    )
+    ```
     """
 
     associated_file_formats: t.ClassVar[set[str]] = {"wig", "bigWig", "bedGraph"}
@@ -251,108 +265,205 @@ class WigTrack(BaseTrack, tag="wig"):
     """
 
 
+class AlignmentSorting(Struct, rename="camel"):
+    """Representing initial sort order of packed alignment rows."""
+
+    chr: str
+    """Sequence (chromosome) name."""
+
+    pos: int
+    """Genomic position."""
+
+    option: t.Literal["BASE", "STRAND", "INSERT_SIZE", "MATE_CHR", "MQ", "TAG"]
+    """Parameter to sort by."""
+
+    tag: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    """Tag name to sort by. Include only if option = 'TAG"""
+
+    direction: t.Literal["ASC", "DESC"] = "ASC"
+    """Sort directions."""
+
+
+class AlignmentFiltering(Struct, rename="camel"):
+    """Represents filtering options for alignments."""
+
+    vendor_failed: bool = True
+    """Filter alignments marked as failing vendor quality checks (bit 0x200)."""
+
+    duplicates: bool = True
+    """Filter alignments marked as a duplicate (bit 0x400)."""
+
+    secondary: bool = False
+    """Filter alignments marked as secondary (bit 0x100)."""
+
+    supplementary: bool = False
+    """Filter alignments marked as supplementary (bit 0x800)."""
+
+    mq: int = 0
+    """Filter alignments with mapping quality less than the supplied value."""
+
+    readgroups: t.Union[set[str], UnsetType] = UNSET  # noqa: UP007
+    """Read groups ('RG' tag). If present, filter alignments not matching this set."""
+
+
 class AlignmentTrack(BaseTrack, tag="alignment"):
-    """Represents alignment data such as BAM files.
+    """Display views of read alignments from BAM or CRAM files.
 
     Associated file formats: bam, cram.
 
-    Ref: https://github.com/igvteam/igv.js/wiki/Alignment-Track
+    Ref: https://igv.org/doc/igvjs/#tracks/Alignment-Track
+
+    Example:
+    ```py
+    AlignmentTrack(
+      format="bam",
+      name="NA12878",
+      url="gs://genomics-public-data/platinum-genomes/bam/NA12878_S1.bam",
+      index_url="gs://genomics-public-data/platinum-genomes/bam/NA12878_S1.bam.bai",
+    )
+    ```
     """
 
-    # Show coverage depth track.
-    show_coverage: bool = True
+    show_coverage: t.Union[bool, UnsetType] = UNSET  # noqa: UP007
+    """Show coverage depth track. Default `True`."""
 
-    # Show individual alignments.
-    show_alignments: bool = True
+    show_alignments: t.Union[bool, UnsetType] = UNSET  # noqa: UP007
+    """Show individual alignments. Default `True`."""
 
-    # If true, paired reads are drawn connected with a line.
-    view_as_pairs: bool = False
+    view_as_pairs: t.Union[bool, UnsetType] = UNSET  # noqa: UP007
+    """Whether paired reads are drawn connected with a line. Default `False`."""
 
-    # If false, mate information in paired reads is ignored during downsampling.
-    pairs_supported: bool = True
+    pairs_supported: t.Union[bool, UnsetType] = UNSET  # noqa: UP007
+    """Whether paired mate info is ignored during downsampling. Default `True`."""
 
-    # Color of coverage track.
-    coverage_color: str = "rgb(150, 150, 150)"
+    color: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    """Default color of alignment blocks. Default `"rgb(170, 170, 170)"`."""
 
-    # Default color of alignment blocks.
-    color = "rgb(170, 170, 170)"
+    deletion_color: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    """Color of line representing a deletion. Default `"black"`."""
 
-    # Color of line representing a deletion.
-    deletion_color: str = "black"
+    skipped_color: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    """Color of line representing a skipped region (e.g., splice junction).
 
-    # Color of line representing a skipped region (e.g., splice junction).
-    skipped_color: str = "rgb(150, 170, 170)"
+    Default `"rgb(150, 170, 170)"`.
+    """
 
-    # Color of marker for insertions.
-    insertion_color: str = "rgb(138, 94, 161)"
+    insertion_color: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    """Color of marker for insertions. Default `"rgb(138, 94, 161)"`."""
 
-    # Color of alignment on negative strand. Applicable if colorBy = "strand".
-    neg_strand_color: str = "rgba(150, 150, 230, 0.75)"
+    neg_strand_color: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    """Color of alignment on negative strand. Default `"rgba(150, 150, 230, 0.75)"`.
 
-    # Color of alignment or position strand. Applicable if colorBy = "strand".
-    pos_strand_color: str = "rgba(230, 150, 150, 0.75)"
+    Applicable if `color_by` = `"strand"`.
+    """
 
-    # Color of connector line between read pairs ("view as pairs" mode).
-    pair_connector_color: typing.Union[str, None] = None  # noqa: UP007
+    pos_strand_color: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    """Color of alignment or position strand. Default `"rgba(230, 150, 150, 0.75)"`.
 
-    # Alignment color option: one of "none", "strand", "firstOfPairStrand",
-    # "pairOrientation", "tlen", "unexpectedPair", or "tag".
-    color_by: str = "unexpectedPair"
+    Applicable if `color_by` = `"strand"`.
+    """
 
-    # Specific tag to color alignment by.
-    color_by_tag: typing.Union[str, None] = None  # noqa: UP007
+    pair_connector_color: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    """Color of connector line between read pairs ("view as pairs" mode).
 
-    # Specifies a special tag that explicitly encodes an r,g,b color value.
-    bam_color_tag: str = "YC"
+    Defaults to the alignment color.
+    """
 
-    # Window (bucket) size for alignment downsampling in base pairs.
-    sampling_window_size: int = 100
+    color_by: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    """Color alignment by property. Default `"unexpectedPair"`.
 
-    # Number of alignments to keep per bucket.
-    sampling_depth: int = 100
+    See: https://igv.org/doc/igvjs/#tracks/Alignment-Track/#colorby-options
+    """
 
-    # Height in pixels of an alignment row when in expanded mode.
-    alignment_row_height: int = 14
+    group_by: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    """Group alignments by property.
 
-    # Readgroup ID value (tag 'RG').
-    readgroup: typing.Union[str, None] = None  # noqa: UP007
+    See: https://igv.org/doc/igvjs/#tracks/Alignment-Track/#groupby-options
+    """
 
-    # Initial sort option. Supports various sorting strategies including by base,
-    # strand, insert size, etc.
-    sort: typing.Union[str, None] = None  # noqa: UP007
+    sampling_window_size: t.Union[int, UnsetType] = UNSET  # noqa: UP007
+    """Window (bucket) size for alignment downsampling in base pairs. Default `100`."""
 
-    # Show soft-clipped regions.
-    show_soft_clips: bool = False
+    sampling_depth: t.Union[int, UnsetType] = UNSET  # noqa: UP007
+    """Number of alignments to keep per bucket. Default 100.
 
-    # Highlight alignment bases which do not match the reference.
-    show_mismatches: bool = True
+    WARNING: Setting to a high value can freeze the browser when
+    viewing areas of deep coverage.
+    """
 
-    # Show number of bases for insertions inline when zoomed in.
-    show_insertion_text: bool = False
+    readgroup: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    """Readgroup ID value (tag 'RG')."""
 
-    # Color for insertion count text.
-    insertion_text_color: str = "white"
+    sort: t.Union[AlignmentSorting, UnsetType] = UNSET  # noqa: UP007
+    """Initial sort option.
 
-    # Show number of bases deleted inline when zoomed in.
-    show_deletion_text: bool = False
+    See: https://igv.org/doc/igvjs/#tracks/Alignment-Track/#sort-option
+    """
 
-    # Color for deletion count text.
-    deletion_text_color: str = "black"
+    filter: t.Union[AlignmentFiltering, UnsetType] = UNSET  # noqa: UP007
+    """Alignment filter options.
 
-    # Expected orientation of pairs, one of ff, fr, or rf.
-    pair_orientation: typing.Union[str, None] = None  # noqa: UP007
+    See: https://igv.org/doc/igvjs/#tracks/Alignment-Track/#filter-options
+    """
 
-    # Minimum expected absolute "TLEN" value.
-    min_tlen: typing.Union[int, None] = None  # noqa: UP007
+    show_soft_clips: t.Union[bool, UnsetType] = UNSET  # noqa: UP007
+    """Show soft-clipped regions. Default `False`."""
 
-    # Maximum expected absolute "TLEN" value.
-    max_tlen: typing.Union[int, None] = None  # noqa: UP007
+    show_mismatches: t.Union[bool, UnsetType] = UNSET  # noqa: UP007
+    """Highlight alignment bases which do not match the reference. Default `True`."""
 
-    # The percentile threshold for expected insert size.
-    min_tlen_percentile: float = 0.1
+    show_all_bases: t.Union[bool, UnsetType] = UNSET  # noqa: UP007
+    """Show all bases of the read sequence. Default `False`."""
 
-    # The percentile maximum for expected insert size.
-    max_tlen_percentile: float = 99.9
+    show_insertion_text: t.Union[bool, UnsetType] = UNSET  # noqa: UP007
+    """Show number of bases for insertions inline when zoomed in. Default `False`."""
+
+    insertion_text_color: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    """Color for insertion count text. Default `"white"`."""
+
+    show_deletion_text: t.Union[bool, UnsetType] = UNSET  # noqa: UP007
+    """Show number of bases deleted inline when zoomed in. Default `False`."""
+
+    deletion_text_color: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    """Color for deletion count text. Default `"black"`."""
+
+    display_mode: t.Union[t.Literal["EXPANDED", "SQUISHED", "FULL"], UnsetType] = UNSET  # noqa: UP007
+    """Display mode for the track. Deault `"EXPANDED"`.
+
+      * `EXPANDED` - Pack alignments densely and draw at `alignment_row_height`
+      * `SQUISHED` - Pack alignments densely and draw at `squished_row_height`
+      * `FULL`     - Draw 1 alignment per row at `alignment_row_height`.
+    """
+
+    alignment_row_height: t.Union[int, UnsetType] = UNSET  # noqa: UP007
+    """Pixel height for each alignment row in `"EXPANDED"` or `"FULL"` display mode.
+
+    Default `14`.
+    """
+
+    squished_row_height: t.Union[int, UnsetType] = UNSET  # noqa: UP007
+    """Pixel height for each alignment row in `"SQUISHED"` display mode. Default `3`."""
+
+    coverage_color: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    """Color of coverage track. Default `"rgb(150, 150, 150)"`."""
+
+    coverage_track_height: t.Union[int, UnsetType] = UNSET  # noqa: UP007
+    """Height in pixels of the coverage track. Default `3`."""
+
+    autoscale: t.Union[bool, UnsetType] = UNSET  # noqa: UP007
+    """Autoscale coverage track to maximum value in view. `True` unless `max` is set."""
+
+    autoscale_group: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    """An identifier for an autoscale group for the coverage track.
+
+    Tracks with the same identifier are autoscaled together.
+    """
+
+    min: t.Union[int, UnsetType] = UNSET  # noqa: UP007
+    """Minimum value for the data (y-axis) scale. Usually zero."""
+
+    max: t.Union[int, UnsetType] = UNSET  # noqa: UP007
+    """Maximum value for the data (y-axis) scale. Ignored if `autoscale` is `True`."""
 
 
 class VariantTrack(BaseTrack, tag="variant"):
@@ -365,11 +476,11 @@ class VariantTrack(BaseTrack, tag="variant"):
 
     # Display mode. 'COLLAPSED' => show variants only,
     # 'SQUISHED' and 'EXPANDED' => show calls.
-    display_mode: typing.Literal["COLLAPSED", "EXPANDED", "SQUISHED"] = "EXPANDED"
+    display_mode: t.Literal["COLLAPSED", "EXPANDED", "SQUISHED"] = "EXPANDED"
     # Height of genotype call rows in SQUISHED mode.
     squished_call_height: int = 1
     # Height of genotype call rows in EXPANDED mode
     expanded_call_height: int = 10
 
 
-Track = typing.Union[AnnotationTrack, WigTrack, AlignmentTrack, VariantTrack]
+Track = t.Union[AnnotationTrack, WigTrack, AlignmentTrack, VariantTrack]
