@@ -24,3 +24,4 @@ ignore = ["COM812", "ISC001"]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*.py" = ["D", "S", "PLR", "ANN"]
+"src/pygv/_tracks.py" = ["UP007"]

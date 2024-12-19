@@ -29,46 +29,46 @@ class BaseTrack(Struct, rename="camel", repr_omit_defaults=True, omit_defaults=T
     url: str
     """URL to the track data resource, such as a file or webservice, or a data URI."""
 
-    index_url: t.Union[str, UnsetType] = field(default=UNSET, name="indexURL")  # noqa: UP007
+    index_url: t.Union[str, UnsetType] = field(default=UNSET, name="indexURL")
     """URL to a file index, such as a BAM .bai, tabix .tbi, or tribble .idx file.
 
     For indexed file access the index URL is required, if absent the entire file
     will be read.
     """
 
-    source_type: t.Union[t.Literal["file", "htsget", "custom"], UnsetType] = UNSET  # noqa: UP007
+    source_type: t.Union[t.Literal["file", "htsget", "custom"], UnsetType] = UNSET
     """Type of data source."""
 
-    format: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    format: t.Union[str, UnsetType] = UNSET
     """No default. If not specified, format is inferred from file name extension."""
 
-    indexed: t.Union[bool, UnsetType] = UNSET  # noqa: UP007
+    indexed: t.Union[bool, UnsetType] = UNSET
     """Explicitly indicate whether the resource is indexed.
 
     This flag is redundant if `index_url` is provided. It can be used to load small
     BAM files without an index by setting to `False`
     """
 
-    order: t.Union[int, UnsetType] = UNSET  # noqa: UP007
+    order: t.Union[int, UnsetType] = UNSET
     """Integer value specifying relative order of track position on the screen.
 
     To pin a track to the bottom use a very large value.
     If no order is specified, tracks appear in order of their addition.
     """
 
-    color: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    color: t.Union[str, UnsetType] = UNSET
     """CSS color value for track features, e.g. "#ff0000" or "rgb(100,0,100)"."""
 
-    height: t.Union[int, UnsetType] = UNSET  # noqa: UP007
+    height: t.Union[int, UnsetType] = UNSET
     """Initial height of track viewport in pixels. Default 50."""
 
-    min_height: t.Union[int, UnsetType] = UNSET  # noqa: UP007
+    min_height: t.Union[int, UnsetType] = UNSET
     """Minimum height of track in pixels. Default 50."""
 
-    max_height: t.Union[int, UnsetType] = UNSET  # noqa: UP007
+    max_height: t.Union[int, UnsetType] = UNSET
     """Maximum height of track in pixels. Default 500."""
 
-    visibility_window: t.Union[int, UnsetType] = UNSET  # noqa: UP007
+    visibility_window: t.Union[int, UnsetType] = UNSET
     """Maximum window size in base pairs for which indexed annotations or
     variants are displayed.
 
@@ -76,16 +76,16 @@ class BaseTrack(Struct, rename="camel", repr_omit_defaults=True, omit_defaults=T
     other track types.
     """
 
-    removable: t.Union[bool, UnsetType] = UNSET  # noqa: UP007
+    removable: t.Union[bool, UnsetType] = UNSET
     """If true a "remove" item is included in the track menu. Default `True`."""
 
-    headers: t.Union[dict[str, str], UnsetType] = UNSET  # noqa: UP007
+    headers: t.Union[dict[str, str], UnsetType] = UNSET
     """HTTP headers to include with each request.
 
     For example `{"Authorization": "Bearer cn389ncoiwuencr"}`.
     """
 
-    oauth_token: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    oauth_token: t.Union[str, UnsetType] = UNSET
     """OAuth token, or function returning an OAuth token.
 
     The value will be included as a Bearer token with each request.
@@ -132,30 +132,30 @@ class AnnotationTrack(BaseTrack, tag="annotation"):
     }
     """File formats associated with the annotation type."""
 
-    display_mode: t.Union[t.Literal["COLLAPSED", "EXPANDED", "SQUISHED"], UnsetType] = (  # noqa: UP007
+    display_mode: t.Union[t.Literal["COLLAPSED", "EXPANDED", "SQUISHED"], UnsetType] = (
         UNSET
     )
     """Annotation track display mode. Default `"COLLAPSED"`."""
 
-    expanded_row_height: t.Union[int, UnsetType] = UNSET  # noqa: UP007
+    expanded_row_height: t.Union[int, UnsetType] = UNSET
     """Height of each row of features in `"EXPANDED"` mode. Default `30`."""
 
-    squished_row_height: t.Union[int, UnsetType] = UNSET  # noqa: UP007
+    squished_row_height: t.Union[int, UnsetType] = UNSET
     """Height of each row of features in `"SQUISHED"` mode. Default `15`."""
 
-    name_field: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    name_field: t.Union[str, UnsetType] = UNSET
     """For GFF/GTF file formats. Name of column 9 to be used for feature label."""
 
-    max_rows: t.Union[int, UnsetType] = UNSET  # noqa: UP007
+    max_rows: t.Union[int, UnsetType] = UNSET
     """Maximum number of rows of features to display. Default `500`."""
 
-    searchable: t.Union[bool, UnsetType] = UNSET  # noqa: UP007
+    searchable: t.Union[bool, UnsetType] = UNSET
     """Whether feature names for this track can be searched. Default `False`.
 
     Does not work for indexed tracks. Use with caution; it is memory intensive.
     """
 
-    searchable_fields: t.Union[list[str], UnsetType] = UNSET  # noqa: UP007
+    searchable_fields: t.Union[list[str], UnsetType] = UNSET
     """Field (column 9) names to be included in feature searches.
 
     For use with the `searchable` option in conjunction with GFF files.
@@ -164,19 +164,19 @@ class AnnotationTrack(BaseTrack, tag="annotation"):
     sign or percent encoded ("%20).
     """
 
-    filter_types: t.Union[list[str], UnsetType] = UNSET  # noqa: UP007
+    filter_types: t.Union[list[str], UnsetType] = UNSET
     """GFF feature types to filter from display. Default `["chromosome", "gene"]`."""
 
-    color: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    color: t.Union[str, UnsetType] = UNSET
     """CSS color value for features. Default `"rgb(0,0,150)"` (i.e. `"#000096"`)."""
 
-    alt_color: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    alt_color: t.Union[str, UnsetType] = UNSET
     """If supplied, used for features on negative strand."""
 
-    color_by: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    color_by: t.Union[str, UnsetType] = UNSET
     """Used with GFF/GTF files. Name of column 9 attribute to color features by."""
 
-    color_table: t.Union[dict[str, str], UnsetType] = UNSET  # noqa: UP007
+    color_table: t.Union[dict[str, str], UnsetType] = UNSET
     """Maps attribute values to CSS colors.
 
     Used in conjunction with the `color_by` to assign specific colors to attributes.
@@ -220,45 +220,45 @@ class WigTrack(BaseTrack, tag="wig"):
     associated_file_formats: t.ClassVar[set[str]] = {"wig", "bigWig", "bedGraph"}
     """File formats associated with the wig type."""
 
-    autoscale: t.Union[bool, None] = None  # noqa: UP007
+    autoscale: t.Union[bool, None] = None
     """Autoscale track to maximum value in view."""
 
-    autoscale_group: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    autoscale_group: t.Union[str, UnsetType] = UNSET
     """An identifier for an autoscale group.
 
     Tracks with the same identifier are autoscaled together.
     """
 
-    min: t.Union[int, UnsetType] = UNSET  # noqa: UP007
+    min: t.Union[int, UnsetType] = UNSET
     """Minimum value for the data (y-axis) scale. Usually zero."""
 
-    max: t.Union[int, UnsetType] = UNSET  # noqa: UP007
+    max: t.Union[int, UnsetType] = UNSET
     """Maximum value for the data (y-axis) scale. Ignored if `autoscale` is `True`."""
 
-    color: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    color: t.Union[str, UnsetType] = UNSET
     """CSS color value. Default `"rgb(150,150,150)"`."""
 
-    alt_color: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    alt_color: t.Union[str, UnsetType] = UNSET
     """If supplied, used for negative values."""
 
-    color_scale: t.Union[dict, UnsetType] = UNSET  # noqa: UP007
+    color_scale: t.Union[dict, UnsetType] = UNSET
     """Color scale for heatmap (graphType = "heatmap" ).
 
     Ref: https://igv.org/doc/igvjs/#tracks/Wig-Track/#color-scale-objects
     """
 
-    guide_lines: t.Union[list[GuideLine], UnsetType] = UNSET  # noqa: UP007
+    guide_lines: t.Union[list[GuideLine], UnsetType] = UNSET
     """Draw a horizontal line for each object in the given array."""
 
-    graph_type: t.Union[t.Literal["bar", "points", "heatmap", "line"], UnsetType] = (  # noqa: UP007
+    graph_type: t.Union[t.Literal["bar", "points", "heatmap", "line"], UnsetType] = (
         UNSET
     )
     """Type of graph. Default `"bar"`."""
 
-    flip_axis: t.Union[bool, UnsetType] = UNSET  # noqa: UP007
+    flip_axis: t.Union[bool, UnsetType] = UNSET
     """Whether the track is drawn "upside down" with zero at top. Default `False`."""
 
-    window_function: t.Union[t.Literal["min", "max", "mean"], UnsetType] = UNSET  # noqa: UP007
+    window_function: t.Union[t.Literal["min", "max", "mean"], UnsetType] = UNSET
     """Governs how data is summarized when zooming out. Default `"mean"`.
 
     Applicable to tracks created from bigwig and tdf files.
@@ -277,7 +277,7 @@ class AlignmentSorting(Struct, rename="camel"):
     option: t.Literal["BASE", "STRAND", "INSERT_SIZE", "MATE_CHR", "MQ", "TAG"]
     """Parameter to sort by."""
 
-    tag: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    tag: t.Union[str, UnsetType] = UNSET
     """Tag name to sort by. Include only if option = 'TAG"""
 
     direction: t.Literal["ASC", "DESC"] = "ASC"
@@ -302,7 +302,7 @@ class AlignmentFiltering(Struct, rename="camel"):
     mq: int = 0
     """Filter alignments with mapping quality less than the supplied value."""
 
-    readgroups: t.Union[set[str], UnsetType] = UNSET  # noqa: UP007
+    readgroups: t.Union[set[str], UnsetType] = UNSET
     """Read groups ('RG' tag). If present, filter alignments not matching this set."""
 
 
@@ -324,110 +324,110 @@ class AlignmentTrack(BaseTrack, tag="alignment"):
     ```
     """
 
-    show_coverage: t.Union[bool, UnsetType] = UNSET  # noqa: UP007
+    show_coverage: t.Union[bool, UnsetType] = UNSET
     """Show coverage depth track. Default `True`."""
 
-    show_alignments: t.Union[bool, UnsetType] = UNSET  # noqa: UP007
+    show_alignments: t.Union[bool, UnsetType] = UNSET
     """Show individual alignments. Default `True`."""
 
-    view_as_pairs: t.Union[bool, UnsetType] = UNSET  # noqa: UP007
+    view_as_pairs: t.Union[bool, UnsetType] = UNSET
     """Whether paired reads are drawn connected with a line. Default `False`."""
 
-    pairs_supported: t.Union[bool, UnsetType] = UNSET  # noqa: UP007
+    pairs_supported: t.Union[bool, UnsetType] = UNSET
     """Whether paired mate info is ignored during downsampling. Default `True`."""
 
-    color: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    color: t.Union[str, UnsetType] = UNSET
     """Default color of alignment blocks. Default `"rgb(170, 170, 170)"`."""
 
-    deletion_color: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    deletion_color: t.Union[str, UnsetType] = UNSET
     """Color of line representing a deletion. Default `"black"`."""
 
-    skipped_color: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    skipped_color: t.Union[str, UnsetType] = UNSET
     """Color of line representing a skipped region (e.g., splice junction).
 
     Default `"rgb(150, 170, 170)"`.
     """
 
-    insertion_color: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    insertion_color: t.Union[str, UnsetType] = UNSET
     """Color of marker for insertions. Default `"rgb(138, 94, 161)"`."""
 
-    neg_strand_color: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    neg_strand_color: t.Union[str, UnsetType] = UNSET
     """Color of alignment on negative strand. Default `"rgba(150, 150, 230, 0.75)"`.
 
     Applicable if `color_by` = `"strand"`.
     """
 
-    pos_strand_color: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    pos_strand_color: t.Union[str, UnsetType] = UNSET
     """Color of alignment or position strand. Default `"rgba(230, 150, 150, 0.75)"`.
 
     Applicable if `color_by` = `"strand"`.
     """
 
-    pair_connector_color: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    pair_connector_color: t.Union[str, UnsetType] = UNSET
     """Color of connector line between read pairs ("view as pairs" mode).
 
     Defaults to the alignment color.
     """
 
-    color_by: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    color_by: t.Union[str, UnsetType] = UNSET
     """Color alignment by property. Default `"unexpectedPair"`.
 
     See: https://igv.org/doc/igvjs/#tracks/Alignment-Track/#colorby-options
     """
 
-    group_by: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    group_by: t.Union[str, UnsetType] = UNSET
     """Group alignments by property.
 
     See: https://igv.org/doc/igvjs/#tracks/Alignment-Track/#groupby-options
     """
 
-    sampling_window_size: t.Union[int, UnsetType] = UNSET  # noqa: UP007
+    sampling_window_size: t.Union[int, UnsetType] = UNSET
     """Window (bucket) size for alignment downsampling in base pairs. Default `100`."""
 
-    sampling_depth: t.Union[int, UnsetType] = UNSET  # noqa: UP007
+    sampling_depth: t.Union[int, UnsetType] = UNSET
     """Number of alignments to keep per bucket. Default 100.
 
     WARNING: Setting to a high value can freeze the browser when
     viewing areas of deep coverage.
     """
 
-    readgroup: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    readgroup: t.Union[str, UnsetType] = UNSET
     """Readgroup ID value (tag 'RG')."""
 
-    sort: t.Union[AlignmentSorting, UnsetType] = UNSET  # noqa: UP007
+    sort: t.Union[AlignmentSorting, UnsetType] = UNSET
     """Initial sort option.
 
     See: https://igv.org/doc/igvjs/#tracks/Alignment-Track/#sort-option
     """
 
-    filter: t.Union[AlignmentFiltering, UnsetType] = UNSET  # noqa: UP007
+    filter: t.Union[AlignmentFiltering, UnsetType] = UNSET
     """Alignment filter options.
 
     See: https://igv.org/doc/igvjs/#tracks/Alignment-Track/#filter-options
     """
 
-    show_soft_clips: t.Union[bool, UnsetType] = UNSET  # noqa: UP007
+    show_soft_clips: t.Union[bool, UnsetType] = UNSET
     """Show soft-clipped regions. Default `False`."""
 
-    show_mismatches: t.Union[bool, UnsetType] = UNSET  # noqa: UP007
+    show_mismatches: t.Union[bool, UnsetType] = UNSET
     """Highlight alignment bases which do not match the reference. Default `True`."""
 
-    show_all_bases: t.Union[bool, UnsetType] = UNSET  # noqa: UP007
+    show_all_bases: t.Union[bool, UnsetType] = UNSET
     """Show all bases of the read sequence. Default `False`."""
 
-    show_insertion_text: t.Union[bool, UnsetType] = UNSET  # noqa: UP007
+    show_insertion_text: t.Union[bool, UnsetType] = UNSET
     """Show number of bases for insertions inline when zoomed in. Default `False`."""
 
-    insertion_text_color: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    insertion_text_color: t.Union[str, UnsetType] = UNSET
     """Color for insertion count text. Default `"white"`."""
 
-    show_deletion_text: t.Union[bool, UnsetType] = UNSET  # noqa: UP007
+    show_deletion_text: t.Union[bool, UnsetType] = UNSET
     """Show number of bases deleted inline when zoomed in. Default `False`."""
 
-    deletion_text_color: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    deletion_text_color: t.Union[str, UnsetType] = UNSET
     """Color for deletion count text. Default `"black"`."""
 
-    display_mode: t.Union[t.Literal["EXPANDED", "SQUISHED", "FULL"], UnsetType] = UNSET  # noqa: UP007
+    display_mode: t.Union[t.Literal["EXPANDED", "SQUISHED", "FULL"], UnsetType] = UNSET
     """Display mode for the track. Deault `"EXPANDED"`.
 
       * `EXPANDED` - Pack alignments densely and draw at `alignment_row_height`
@@ -435,52 +435,127 @@ class AlignmentTrack(BaseTrack, tag="alignment"):
       * `FULL`     - Draw 1 alignment per row at `alignment_row_height`.
     """
 
-    alignment_row_height: t.Union[int, UnsetType] = UNSET  # noqa: UP007
+    alignment_row_height: t.Union[int, UnsetType] = UNSET
     """Pixel height for each alignment row in `"EXPANDED"` or `"FULL"` display mode.
 
     Default `14`.
     """
 
-    squished_row_height: t.Union[int, UnsetType] = UNSET  # noqa: UP007
+    squished_row_height: t.Union[int, UnsetType] = UNSET
     """Pixel height for each alignment row in `"SQUISHED"` display mode. Default `3`."""
 
-    coverage_color: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    coverage_color: t.Union[str, UnsetType] = UNSET
     """Color of coverage track. Default `"rgb(150, 150, 150)"`."""
 
-    coverage_track_height: t.Union[int, UnsetType] = UNSET  # noqa: UP007
+    coverage_track_height: t.Union[int, UnsetType] = UNSET
     """Height in pixels of the coverage track. Default `3`."""
 
-    autoscale: t.Union[bool, UnsetType] = UNSET  # noqa: UP007
+    autoscale: t.Union[bool, UnsetType] = UNSET
     """Autoscale coverage track to maximum value in view. `True` unless `max` is set."""
 
-    autoscale_group: t.Union[str, UnsetType] = UNSET  # noqa: UP007
+    autoscale_group: t.Union[str, UnsetType] = UNSET
     """An identifier for an autoscale group for the coverage track.
 
     Tracks with the same identifier are autoscaled together.
     """
 
-    min: t.Union[int, UnsetType] = UNSET  # noqa: UP007
+    min: t.Union[int, UnsetType] = UNSET
     """Minimum value for the data (y-axis) scale. Usually zero."""
 
-    max: t.Union[int, UnsetType] = UNSET  # noqa: UP007
+    max: t.Union[int, UnsetType] = UNSET
     """Maximum value for the data (y-axis) scale. Ignored if `autoscale` is `True`."""
 
 
 class VariantTrack(BaseTrack, tag="variant"):
-    """Represents variant data such as VCF files.
+    """Displays variant records from "VCF" files or equivalents.
 
     Associated file formats: vcf.
 
-    Ref: https://github.com/igvteam/igv.js/wiki/Variant-Track
+    Ref: https://igv.org/doc/igvjs/#tracks/Variant-Track/
+
+    Example:
+    ```py
+    # Basic
+
+    VariantTrack(
+        format="vcf",
+        url="https://s3.amazonaws.com/1000genomes/release/20130502/ALL.chr22.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz",
+        index_url="https://s3.amazonaws.com/1000genomes/release/20130502/ALL.chr22.phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz.tbi",
+        name="1KG variants (chr22)",
+        squished_call_height=1,
+        expanded_call_height=4,
+        display_mode="SQUISHED",
+        visibility_window=1000
+    )
+
+    # Color-by info field with color table
+
+    VariantTrack(
+        url="https://s3.amazonaws.com/igv.org.demo/nstd186.GRCh38.variant_call.vcf.gz",
+        index_url="https://s3.amazonaws.com/igv.org.demo/nstd186.GRCh38.variant_call.vcf.gz.tbi",
+        name="Color by table, SVTYPE",
+        visibility_window=-1,
+        color_by="SVTYPE",
+        color_table={
+            "DEL": "#ff2101",
+            "INS": "#001888",
+            "DUP": "#028401",
+            "INV": "#008688",
+            "CNV": "#8931ff",
+            "BND": "#891100",
+            "*": "#002eff",
+        },
+    )
+    ```
     """
 
-    # Display mode. 'COLLAPSED' => show variants only,
-    # 'SQUISHED' and 'EXPANDED' => show calls.
-    display_mode: t.Literal["COLLAPSED", "EXPANDED", "SQUISHED"] = "EXPANDED"
-    # Height of genotype call rows in SQUISHED mode.
-    squished_call_height: int = 1
-    # Height of genotype call rows in EXPANDED mode
-    expanded_call_height: int = 10
+    display_mode: t.Union[t.Literal["COLLAPSED", "EXPANDED", "SQUISHED"], UnsetType] = (
+        UNSET
+    )
+    """Display option.  Default `"EXPANDED"`.
+
+        * 'COLLAPSED' => show variants only
+        * 'SQUISHED' and 'EXPANDED' => show calls.
+    """
+
+    squished_call_height: t.Union[int, UnsetType] = UNSET
+    """Height of genotype call rows in `"SQUISHED"` mode. Default `1`."""
+
+    expanded_call_height: t.Union[int, UnsetType] = UNSET
+    """Height of genotype call rows in EXPANDED mode. Default `10`."""
+
+    # Variant color options
+
+    color: t.Union[str, UnsetType] = UNSET
+    """A CSS color value for a variant."""
+
+    color_by: t.Union[str, UnsetType] = UNSET
+    """Specify an `INFO` field to color variants by.
+
+    Optional, if specified takes precedence over `color` property.
+    """
+
+    color_table: t.Union[dict[str, str], UnsetType] = UNSET
+    """Color table mapping `INFO` field values to colors.
+
+    Use in conjunction with `color_by`.
+
+    Optional, if not specified a color table will be generated.
+    """
+
+    # Genotype color options
+
+    no_call_color: t.Union[str, UnsetType] = UNSET
+    """Color for no-calls. Default `"rgb(250, 250, 250)"`."""
+
+    homevar_color: t.Union[str, UnsetType] = UNSET
+    """CSS color for homozygous non-reference calls. Default `"rgb(17,248,254)"`"""
+
+    hetvar_color: t.Union[str, UnsetType] = UNSET
+    """CSS color for heterozygous calls. Default `"rgb(34,12,253)"`."""
+
+    homref_color: t.Union[str, UnsetType] = UNSET
+    """CSS color for homozygous reference calls. Default `"rgb(200, 200, 200)"`."""
 
 
 Track = t.Union[AnnotationTrack, WigTrack, AlignmentTrack, VariantTrack]
