@@ -13,6 +13,7 @@ if TYPE_CHECKING:
 
 class Browser(anywidget.AnyWidget):
     _esm = pathlib.Path(__file__).parent / "static" / "widget.js"
+
     _genome = traitlets.Unicode().tag(sync=True)
     _locus = traitlets.Unicode().tag(sync=True)
     _tracks = traitlets.List().tag(
@@ -21,6 +22,7 @@ class Browser(anywidget.AnyWidget):
     )
 
     def __init__(self, config: Config) -> None:
+        config = config.servable()
         super().__init__(
             _genome=config.genome,
             _locus=config.locus,
