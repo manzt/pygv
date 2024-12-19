@@ -266,7 +266,7 @@ class WigTrack(BaseTrack, tag="wig"):
 
 
 class AlignmentSorting(Struct, rename="camel"):
-    """Representing initial sort order of packed alignment rows."""
+    """Represents initial sort order of packed alignment rows."""
 
     chr: str
     """Sequence (chromosome) name."""
@@ -323,6 +323,9 @@ class AlignmentTrack(BaseTrack, tag="alignment"):
     )
     ```
     """
+
+    associated_file_formats: t.ClassVar[set[str]] = {"bam", "cram"}
+    """File formats associated with the alignment type."""
 
     show_coverage: t.Union[bool, UnsetType] = UNSET
     """Show coverage depth track. Default `True`."""
@@ -509,6 +512,9 @@ class VariantTrack(BaseTrack, tag="variant"):
     ```
     """
 
+    associated_file_formats: t.ClassVar[set[str]] = {"vcf"}
+    """File formats associated with the variant type."""
+
     display_mode: t.Union[t.Literal["COLLAPSED", "EXPANDED", "SQUISHED"], UnsetType] = (
         UNSET
     )
@@ -577,10 +583,92 @@ class MutationTrack(BaseTrack, tag="mut"):
     ```
     """
 
+    associated_file_formats: t.ClassVar[set[str]] = {"mut", "maf"}
+    """File formats associated with the mut type."""
+
     display_mode: t.Union[t.Literal["EXPANDED", "SQUISHED", "COLLAPSED"], UnsetType] = (
         UNSET
     )
     """The track display mode. Default `"EXPANDED"`."""
 
 
-Track = t.Union[AnnotationTrack, WigTrack, AlignmentTrack, VariantTrack, MutationTrack]
+class SegmentedCopyNumberSorting(Struct, rename="camel"):
+    """Represents initial sort order of segmented copy number rows."""
+
+    chr: str
+    """Sequence (chromosome) name."""
+
+    start: int
+    """Position start."""
+
+    end: int
+    """Position end."""
+
+    direction: t.Literal["ASC", "DESC"]
+    """Sort direction."""
+
+
+class SegmentedCopyNumberTrack(BaseTrack, tag="seg"):
+    """Displays segmented copy number values as a heatmap.
+
+    Associated file formats: seg.
+
+    Ref: https://igv.org/doc/igvjs/#tracks/Seg-Track
+
+    * Red = amplifications
+    * Blue = deletions
+
+    There are 2 common conventions for values in segmented copy number files,
+    the copy number itself, and a log score computed from:
+
+    ```py
+    score = 2 * np.log2(copy_number / 2)
+    ```
+
+    The value type is indicated by the `is_log` property.
+
+    If no value is set for `is_log`, it is inferred by the values in the file:
+
+    * all positive values => `is_log` = `False`
+    * any negative values => `is_log` = `True`
+
+    Example:
+    ```py
+    SegmentedCopyNumberTrack(
+        format="seg",
+        url="https://s3.amazonaws.com/igv.org.demo/GBM-TP.seg.gz",
+        indexed=False,
+        is_log=True,
+        name="GBM Copy # (TCGA Broad GDAC)",
+        sort=SegmentedCopyNumberSorting(
+            direction="DESC",
+            chr="chr7",
+            start=55174641,
+            end=55175252,
+        ),
+    )
+    ```
+    """
+
+    associated_file_formats: t.ClassVar[set[str]] = {"seg"}
+    """File formats associated with the seg type."""
+
+    display_mode: t.Union[t.Literal["EXPANDED", "SQUISHED", "FILL"], UnsetType] = UNSET
+    """Track display mode.
+
+    Affects the sample height (height of each row). The "FILL" value will result in all
+    samples visible in the track view.
+    """
+
+    sort: t.Union[SegmentedCopyNumberSorting, UnsetType] = UNSET
+    """The initial sort order."""
+
+
+Track = t.Union[
+    AnnotationTrack,
+    WigTrack,
+    AlignmentTrack,
+    VariantTrack,
+    MutationTrack,
+    SegmentedCopyNumberTrack,
+]
