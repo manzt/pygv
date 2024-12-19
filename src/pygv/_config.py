@@ -41,7 +41,7 @@ class Config(msgspec.Struct):
 
         for t in copy.tracks:
             t.url = resolve_file_or_url(t.url)
-            if t.index_url:
+            if t.index_url != msgspec.UNSET:
                 t.index_url = resolve_file_or_url(t.index_url)
 
         return copy
@@ -76,18 +76,45 @@ def resolve_file_or_url(path_or_url: typing.Union[str, pathlib.Path]) -> str:  #
     return resource.url
 
 
-def resolve_track_type(
+def resolve_track_type(  # noqa: C901, PLR0911
     type_: typing.Union[str, None],  # noqa: FA100
     format_: str,
 ) -> str:
-    if type_ == "alignment" or format_ in {"bam", "cram"}:
-        return "alignment"
     if type_ == "annotation" or format_ in {"bed", "gff", "gff3", "gtf", "bedpe"}:
         return "annotation"
+
     if type_ == "wig" or format_ in {"bigWig", "bw", "bg", "bedGraph"}:
         return "wig"
+
+    if type_ == "alignment" or format_ in {"bam", "cram"}:
+        return "alignment"
+
     if type_ == "variant" or format_ in {"vcf"}:
         return "variant"
+
+    if type_ == "mut" or format_ in {"mut", "maf"}:
+        return "mut"
+
+    if type_ == "seg" or format_ in {"mut", "seg"}:
+        return "seg"
+
+    if type_ == "gwas" or format_ in {"bed", "gwas"}:
+        return "gwas"
+
+    if type_ == "interact" or format_ in {"bedpe", "interact", "bigInteract"}:
+        return "interact"
+
+    if type_ == "qtl" or format_ in {"qtl"}:
+        return "qtl"
+
+    if type_ == "junction" or format_ in {"bed"}:
+        return "junction"
+
+    if type_ == "cnvpytor" or format_ in {"pytor", "vcf"}:
+        return "cnvpytor"
+
+    if type_ == "arc" or format_ in {"bp", "bed"}:
+        return "arc"
 
     msg = "Unknown track type, got: {}"
     raise ValueError(msg)

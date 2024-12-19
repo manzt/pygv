@@ -98,9 +98,6 @@ class BaseTrack(Struct, rename="camel", repr_omit_defaults=True, omit_defaults=T
     id: t.Union[str, UnsetType] = UNSET
     """An identifier for this track."""
 
-    associated_file_formats: t.ClassVar[set[str]] = field(default_factory=lambda: set())
-    """File formats associated with this track type."""
-
 
 class AnnotationTrack(BaseTrack, tag="annotation"):
     """Display views of genomic annotations.
@@ -132,17 +129,6 @@ class AnnotationTrack(BaseTrack, tag="annotation"):
     )
     ```
     """
-
-    associated_file_formats: t.ClassVar[set[str]] = field(
-        default_factory=lambda: {
-            "bed",
-            "gff",
-            "gff3",
-            "gtf",
-            "bedpe",
-        }
-    )
-    """File formats associated with the annotation type."""
 
     display_mode: t.Union[t.Literal["COLLAPSED", "EXPANDED", "SQUISHED"], UnsetType] = (
         UNSET
@@ -228,11 +214,6 @@ class WigTrack(BaseTrack, tag="wig"):
     )
     ```
     """
-
-    associated_file_formats: t.ClassVar[set[str]] = field(
-        default_factory=lambda: {"wig", "bigWig", "bedGraph"}
-    )
-    """File formats associated with the wig type."""
 
     autoscale: t.Union[bool, None] = None
     """Autoscale track to maximum value in view."""
@@ -337,11 +318,6 @@ class AlignmentTrack(BaseTrack, tag="alignment"):
     )
     ```
     """
-
-    associated_file_formats: t.ClassVar[set[str]] = field(
-        default_factory=lambda: {"bam", "cram"}
-    )
-    """File formats associated with the alignment type."""
 
     show_coverage: t.Union[bool, UnsetType] = UNSET
     """Show coverage depth track. Default `True`."""
@@ -528,11 +504,6 @@ class VariantTrack(BaseTrack, tag="variant"):
     ```
     """
 
-    associated_file_formats: t.ClassVar[set[str]] = field(
-        default_factory=lambda: {"vcf"}
-    )
-    """File formats associated with the variant type."""
-
     display_mode: t.Union[t.Literal["COLLAPSED", "EXPANDED", "SQUISHED"], UnsetType] = (
         UNSET
     )
@@ -601,11 +572,6 @@ class MutationTrack(BaseTrack, tag="mut"):
     ```
     """
 
-    associated_file_formats: t.ClassVar[set[str]] = field(
-        default_factory=lambda: {"mut", "maf"}
-    )
-    """File formats associated with the mut type."""
-
     display_mode: t.Union[t.Literal["EXPANDED", "SQUISHED", "COLLAPSED"], UnsetType] = (
         UNSET
     )
@@ -670,11 +636,6 @@ class SegmentedCopyNumberTrack(BaseTrack, tag="seg"):
     ```
     """
 
-    associated_file_formats: t.ClassVar[set[str]] = field(
-        default_factory=lambda: {"seg"}
-    )
-    """File formats associated with the seg type."""
-
     display_mode: t.Union[t.Literal["EXPANDED", "SQUISHED", "FILL"], UnsetType] = UNSET
     """Track display mode.
 
@@ -719,11 +680,6 @@ class GwasTrack(BaseTrack, tag="gwas"):
     )
     ```
     """
-
-    associated_file_formats: t.ClassVar[set[str]] = field(
-        default_factory=lambda: {"bed", "gwas"}
-    )
-    """File formats associated with the gwas type."""
 
     min: t.Union[int, UnsetType] = UNSET
     """Sets the minimum value for the data (y-axis) scale. Default `0`."""
@@ -797,11 +753,6 @@ class InteractTrack(BaseTrack, tag="interact"):
     ```
     """
 
-    associated_file_formats: t.ClassVar[set[str]] = field(
-        default_factory=lambda: {"bedpe", "interact", "bigInteract"}
-    )
-    """File formats associated with the gwas type."""
-
     arc_type: t.Union[
         t.Literal["nested", "proportional", "inView", "partialInView"], UnsetType
     ] = UNSET
@@ -844,11 +795,6 @@ class QtlTrack(BaseTrack, tag="qtl"):
     )
     ```
     """
-
-    associated_file_formats: t.ClassVar[set[str]] = field(
-        default_factory=lambda: {"qtl"}
-    )
-    """File formats associated with the gwas type."""
 
     min: t.Union[float, UnsetType] = UNSET
     """Minimum value of y-axis in -log10 units. Default `3.5`."""
@@ -899,11 +845,6 @@ class SpliceJunctionTrack(BaseTrack, tag="junction"):
     )
     ```
     """
-
-    associated_file_formats: t.ClassVar[set[str]] = field(
-        default_factory=lambda: {"bed"}
-    )
-    """File formats associated with the splice junction track type."""
 
     # Display Options
 
@@ -1016,11 +957,6 @@ class CnvPytorTrack(BaseTrack, tag="cnvpytor"):
     ```
     """
 
-    associated_file_formats: t.ClassVar[set[str]] = field(
-        default_factory=lambda: {"pytor", "vcf"}
-    )
-    """File formats associated with the splice cnvpytor track type."""
-
     signal_name: t.Union[t.Literal["rd_snp", "rd", "snp"], UnsetType] = field(
         default=UNSET, name="signal_name"
     )
@@ -1108,11 +1044,6 @@ class ArcTrack(BaseTrack, tag="arc"):
     ArcTrack(format="bp", name="RNA Struct BP", url="example.bp")
     ```
     """
-
-    associated_file_formats: t.ClassVar[set[str]] = field(
-        default_factory=lambda: {"bp", "bed"}
-    )
-    """File formats associated with the arc type."""
 
     arc_orientation: t.Union[t.Literal["UP", "DOWN"], UnsetType] = UNSET
     """Direction of arcs ("UP" or "DOWN"). Default `"UP"`."""
