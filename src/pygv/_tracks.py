@@ -27,11 +27,11 @@ class BaseTrack(Struct, rename="camel", repr_omit_defaults=True, omit_defaults=T
     For a full configuration options, see the [IGV.js docs](https://igv.org/doc/igvjs/#tracks/Tracks)
     """
 
-    name: str
-    """Display name (label). Required."""
-
-    url: str
+    url: t.Union[str, UnsetType] = UNSET
     """URL to the track data resource, such as a file or webservice, or a data URI."""
+
+    name: t.Union[str, UnsetType] = UNSET
+    """Display name (label). Required."""
 
     index_url: t.Union[str, UnsetType] = field(default=UNSET, name="indexURL")
     """URL to a file index, such as a BAM .bai, tabix .tbi, or tribble .idx file.
@@ -72,7 +72,7 @@ class BaseTrack(Struct, rename="camel", repr_omit_defaults=True, omit_defaults=T
     max_height: t.Union[int, UnsetType] = UNSET
     """Maximum height of track in pixels. Default 500."""
 
-    visibility_window: t.Union[int, UnsetType] = UNSET
+    visibility_window: t.Union[int, str, UnsetType] = UNSET
     """Maximum window size in base pairs for which indexed annotations or
     variants are displayed.
 

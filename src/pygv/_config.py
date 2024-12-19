@@ -1,23 +1,25 @@
 import copy
 import pathlib
-import typing
+import typing as t
 
 import msgspec
 import servir
+from msgspec import UNSET, Struct, UnsetType
 
 from ._tracks import Track
 
 _PROVIDER = servir.Provider()
 _RESOURCES = set()
 
-FilePathOrUrl = typing.Union[str, pathlib.Path]
+FilePathOrUrl = t.Union[str, pathlib.Path]
 
 
-class Config(msgspec.Struct):
+class Config(Struct, rename="camel", repr_omit_defaults=True, omit_defaults=True):
     """An IGV configuration."""
 
-    genome: str = "hg38"
-    locus: typing.Union[str, None] = None  # noqa: FA100
+    genome: t.Union[str, UnsetType] = UNSET  # noqa: FA100
+    locus: t.Union[str, list[str], UnsetType] = UNSET  # noqa: FA100
+    show_sample_names: t.Union[bool, UnsetType] = UNSET  # noqa: FA100
     tracks: list[Track] = []
 
     @classmethod
@@ -30,7 +32,7 @@ class Config(msgspec.Struct):
         for track in config.get("tracks", []):
             track["type"] = resolve_track_type(
                 track.get("type"),
-                track.get("format", guess_format(track["url"])),
+                track.get("format", guess_format(track.get("url"))),
             )
 
         return msgspec.convert(config, type=Config)
@@ -39,10 +41,12 @@ class Config(msgspec.Struct):
         """Returns a new config with tracks that are ensured to be servable."""  # noqa: D401
         copy = msgspec.convert(msgspec.to_builtins(self), type=Config)
 
-        for t in copy.tracks:
-            t.url = resolve_file_or_url(t.url)
-            if t.index_url != msgspec.UNSET:
-                t.index_url = resolve_file_or_url(t.index_url)
+        for track in copy.tracks:
+            if track.url != msgspec.UNSET:
+                track.url = resolve_file_or_url(track.url)
+
+            if track.index_url != msgspec.UNSET:
+                track.index_url = resolve_file_or_url(track.index_url)
 
         return copy
 
@@ -51,7 +55,7 @@ def is_href(s: str) -> bool:
     return s.startswith(("http", "https"))
 
 
-def resolve_file_or_url(path_or_url: typing.Union[str, pathlib.Path]) -> str:  # noqa: FA100
+def resolve_file_or_url(path_or_url: t.Union[str, pathlib.Path]) -> str:  # noqa: FA100
     """Resolve a file path or URL to a URL.
 
     Parameters
@@ -76,9 +80,9 @@ def resolve_file_or_url(path_or_url: typing.Union[str, pathlib.Path]) -> str:  #
     return resource.url
 
 
-def resolve_track_type(  # noqa: C901, PLR0911
-    type_: typing.Union[str, None],  # noqa: FA100
-    format_: str,
+def resolve_track_type(  # noqa: C901, PLR0911, PLR0912
+    type_: t.Union[str, None],  # noqa: FA100
+    format_: t.Union[str, None],  # noqa: FA100
 ) -> str:
     if type_ == "annotation" or format_ in {"bed", "gff", "gff3", "gtf", "bedpe"}:
         return "annotation"
@@ -116,11 +120,16 @@ def resolve_track_type(  # noqa: C901, PLR0911
     if type_ == "arc" or format_ in {"bp", "bed"}:
         return "arc"
 
+    if type_ == "merged":
+        return "merged"
+
     msg = "Unknown track type, got: {}"
     raise ValueError(msg)
 
 
-def guess_format(filename: str) -> str:
+def guess_format(filename: t.Union[str, None]) -> t.Union[str, None]:  # noqa: FA100
+    if filename is None:
+        return None
     parts = filename.split(".")
     filetype = parts[-1].lower()
     if filetype == "gz":
