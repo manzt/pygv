@@ -838,6 +838,138 @@ class QtlTrack(BaseTrack, tag="qtl"):
     """
 
 
+class SpliceJunctionTrack(BaseTrack, tag="junction"):
+    """
+    Displays splice junction information.
+
+    Associated file formats: bed.
+
+    Ref: https://igv.org/doc/igvjs/#tracks/Splice-Junctions
+
+    Example:
+    ```python
+    SpliceJunctionTrack(
+        name="Junctions",
+        format="bed",
+        url="https://www.dropbox.com/s/nvmy55hhe24plpv/splice_junction_track_test_cases_sampleA.chr15-92835700-93031800.SJ.out.bed.gz?dl=0",
+        index_url="https://www.dropbox.com/s/iv5tcg3t8v3xu23/splice_junction_track_test_cases_sampleA.chr15-92835700-93031800.SJ.out.bed.gz.tbi?dl=0",
+        display_mode="COLLAPSED",
+        min_uniquely_mapped_reads=1,
+        min_total_reads=1,
+        max_fraction_multi_mapped_reads=1,
+        min_spliced_alignment_overhang=0,
+        thickness_based_on="numUniqueReads",
+        bounce_height_based_on="random",
+        color_by="isAnnotatedJunction",
+        label_unique_read_count=True,
+        label_multi_mapped_read_count=True,
+        label_total_read_count=False,
+        label_motif=False,
+        label_is_annotated_junction=" [A]",
+        hide_annotated_junctions=False,
+        hide_unannotated_junctions=False,
+        hide_motifs=["GT/AT", "non-canonical"],
+    )
+    ```
+    """
+
+    associated_file_formats: t.ClassVar[set[str]] = {"bed"}
+    """File formats associated with the splice junction track type."""
+
+    # Display Options
+
+    color_by: t.Union[
+        t.Literal[
+            "numUniqueReads", "numReads", "isAnnotatedJunction", "strand", "motif"
+        ],
+        UnsetType,
+    ] = UNSET
+    """Splice junction color. Default `"numUniqueReads"`."""
+
+    color_by_num_reads_threshold: t.Union[int, UnsetType] = UNSET
+    """Threshold for `color_by`. Default `5`.
+
+    If `color_by` is set to `"numUniqueReads"` or `"numReads"`, junction color will
+    be darker when number of reads exceeds this threshold.
+    """
+
+    thickness_based_on: t.Union[
+        t.Literal["numUniqueReads", "numReads", "isAnnotatedJunction"], UnsetType
+    ] = UNSET
+    """Splice junction line thickness. Default `"numUniqueReads"`."""
+
+    bounce_height_based_on: t.Union[
+        t.Literal["random", "distance", "thickness"], UnsetType
+    ] = UNSET
+    """Splice junction curve height. Default `"random"`."""
+
+    label_unique_read_count: t.Union[bool, UnsetType] = UNSET
+    """Add unique read counts to splice junction label. Default `True`."""
+
+    label_multi_mapped_read_count: t.Union[bool, UnsetType] = UNSET
+    """Add multi-mapped read counts to splice junction label. Default `True`."""
+
+    label_total_read_count: t.Union[bool, UnsetType] = UNSET
+    """Add total read counts to splice junction label. Default `False`."""
+
+    label_motif: t.Union[bool, UnsetType] = UNSET
+    """Add splice junction motif to its label. Default `False`."""
+
+    label_annotated_junction: t.Union[str, UnsetType] = UNSET
+    """Label annotation for junction.
+
+    If defined, the string will be appended to the labels of splice junctions that exist
+    in known gene models.
+    """
+
+    # Filtering Options
+
+    min_uniquely_mapped_reads: t.Union[int, UnsetType] = UNSET
+    """Junction must be supported by at least this many uniquely-mapped reads.
+
+    Default `0`.
+    """
+
+    min_total_reads: t.Union[int, UnsetType] = UNSET
+    """Junction must be supported by at least this many uniquely-mapped + multi-mapped reads.
+
+    Default `0`.
+    """  # noqa: E501
+
+    max_fraction_multi_mapped_reads: t.Union[float, UnsetType] = UNSET
+    """(Uniquely-mapped reads) / (Total reads) must be <= this threshold.
+
+    Default `1`.
+    """
+
+    min_spliced_alignment_overhang: t.Union[int, UnsetType] = UNSET
+    """Minimum spliced alignment overhang in base pairs. Default `0`.
+
+    See [STAR aligner docs](https://github.com/alexdobin/STAR/blob/master/doc/STARmanual.pdf) for details.
+    """  # noqa: E501
+
+    hide_strand: t.Union[t.Literal["+", "-"], UnsetType] = UNSET
+    """Set to "+" or "-" to hide junctions on the plus or minus strand."""
+
+    hide_annotated_junctions: t.Union[bool, UnsetType] = UNSET
+    """Whether to hide annotated junctions. Default `False`.
+
+    If `True`, only novel junctions will be shown (e.g., those not found in gene models passed to the aligner).
+    """  # noqa: E501
+
+    hide_unannotated_junctions: t.Union[bool, UnsetType] = UNSET
+    """Whether to hide unannotated junctions. Default `False`.
+
+    If `True`, only annotated junctions will be shown (eg. those found in gene models passed to the aligner).
+    """  # noqa: E501
+
+    hide_motifs: t.Union[list[str], UnsetType] = UNSET
+    """A list of strings for motif values to hide.
+
+    For example: ["GT/AT", "non-canonical"]
+    """
+
+
 Track = t.Union[
     AnnotationTrack,
     WigTrack,
@@ -847,4 +979,5 @@ Track = t.Union[
     SegmentedCopyNumberTrack,
     InteractTrack,
     QtlTrack,
+    SpliceJunctionTrack,
 ]
