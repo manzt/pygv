@@ -972,7 +972,7 @@ class SpliceJunctionTrack(BaseTrack, tag="junction"):
     """
 
 
-class CnvpytorTrack(BaseTrack, tag="cnvpytor"):
+class CnvPytorTrack(BaseTrack, tag="cnvpytor"):
     """Displays read depth and B-allele frequency (BAF) of variants.
 
     Associated file formats: pytor, vcf
@@ -981,7 +981,7 @@ class CnvpytorTrack(BaseTrack, tag="cnvpytor"):
 
     Example:
     ```python
-    CnvpytorTrack(
+    CnvPytorTrack(
         id="pytor_track",
         name="HepG2 pytor",
         url="https://storage.googleapis.com/cnvpytor_data/HepG2_WGS.pytor",
@@ -1027,6 +1027,43 @@ class CnvpytorTrack(BaseTrack, tag="cnvpytor"):
     """
 
 
+class MergedTrack(BaseTrack, tag="merged"):
+    """Overlay multiple wig tracks.
+
+    Ref: https://igv.org/doc/igvjs/#tracks/Merged/
+
+    Example:
+    ```py
+    MergedTrack(
+        name="Merged",
+        height=50,
+        alpha=0.5,
+        tracks=[
+            WigTrack(
+                format="bigwig",
+                url="https://www.encodeproject.org/files/ENCFF000ASJ/@@download/ENCFF000ASJ.bigWig",
+                color="red",
+            ),
+            WigTrack(
+                format="bigwig",
+                url="https://www.encodeproject.org/files/ENCFF351WPV/@@download/ENCFF351WPV.bigWig",
+                color="green",
+            ),
+        ],
+    )
+    ```
+    """
+
+    tracks: list[WigTrack] = []
+    """Child wig tracks."""
+
+    alpha: t.Union[float, UnsetType] = UNSET
+    """Alpha transparency to apply to individual track colors.
+
+    Number between `0` and `1`. Default `0.5`.
+    """
+
+
 Track = t.Union[
     AnnotationTrack,
     WigTrack,
@@ -1037,4 +1074,5 @@ Track = t.Union[
     InteractTrack,
     QtlTrack,
     SpliceJunctionTrack,
+    CnvPytorTrack,
 ]
