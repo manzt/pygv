@@ -664,6 +664,76 @@ class SegmentedCopyNumberTrack(BaseTrack, tag="seg"):
     """The initial sort order."""
 
 
+class GwasColumns(Struct, rename="camel"):
+    """Declaration of column number for chrom, position, & value."""
+
+    chromosome: int
+    """Chromosome number"""
+    position: int
+    """Genomic position"""
+    value: int
+    """Value."""
+
+
+class GwasTrack(BaseTrack, tag="gwas"):
+    """Display genome wide association data as a "manhattan" style plot.
+
+    Associated file formats: bed, gwas.
+
+    Ref: https://igv.org/doc/igvjs/#tracks/GWAS
+
+    Example:
+    ```py
+    GwasTrack(
+        format="gwas",
+        name="GWAS sample",
+        url="https://s3.amazonaws.com/igv.org.demo/gwas_sample.tsv.gz",
+        indexed=False,
+        columns=GwasColumns(
+            chromosome=12,
+            position=13,
+            value=28,
+        ),
+    )
+    ```
+    """
+
+    associated_file_formats: t.ClassVar[set[str]] = {"bed", "gwas"}
+    """File formats associated with the gwas type."""
+
+    min: t.Union[int, UnsetType] = UNSET
+    """Sets the minimum value for the data (y-axis) scale. Default `0`."""
+
+    max: t.Union[int, UnsetType] = UNSET
+    """Sets the maximum value for the data (y-axis) scale.
+
+    Default `25` for p-value (-log10(pvalue)), `1` for posterior probability.
+    """
+
+    posterior_probability: t.Union[bool, UnsetType] = UNSET
+    """Whether to interpret values as probabilities within range 0-1. Default `False`.
+
+    By default values are treated as p-values and plotted as -log10(P-value).
+    """
+
+    dot_size: t.Union[int, UnsetType] = UNSET
+    """Diameter of dots in pixels. Default `3`."""
+
+    columns: t.Union[GwasColumns, UnsetType] = UNSET
+    """Declaration of column number for chromosome, position, and value.
+
+    For gwas format only.
+    """
+
+    color_table: t.Union[dict[str, str], UnsetType] = UNSET
+    """Object mapping chromosome names -> colors.
+
+    If supplied all chromosomes in data should be included.
+
+    See defaults: https://igv.org/doc/igvjs/#tracks/GWAS/#default-color-table
+    """
+
+
 Track = t.Union[
     AnnotationTrack,
     WigTrack,
