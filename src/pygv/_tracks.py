@@ -91,6 +91,9 @@ class BaseTrack(Struct, rename="camel", repr_omit_defaults=True, omit_defaults=T
     The value will be included as a Bearer token with each request.
     """
 
+    id: t.Union[str, UnsetType] = UNSET
+    """An identifier for this track."""
+
 
 class AnnotationTrack(BaseTrack, tag="annotation"):
     """Display views of genomic annotations.
@@ -839,8 +842,7 @@ class QtlTrack(BaseTrack, tag="qtl"):
 
 
 class SpliceJunctionTrack(BaseTrack, tag="junction"):
-    """
-    Displays splice junction information.
+    """Displays splice junction information.
 
     Associated file formats: bed.
 
@@ -967,6 +969,61 @@ class SpliceJunctionTrack(BaseTrack, tag="junction"):
     """A list of strings for motif values to hide.
 
     For example: ["GT/AT", "non-canonical"]
+    """
+
+
+class CnvpytorTrack(BaseTrack, tag="cnvpytor"):
+    """Displays read depth and B-allele frequency (BAF) of variants.
+
+    Associated file formats: pytor, vcf
+
+    Ref: https://igv.org/doc/igvjs/#tracks/CNVPytor
+
+    Example:
+    ```python
+    CnvpytorTrack(
+        id="pytor_track",
+        name="HepG2 pytor",
+        url="https://storage.googleapis.com/cnvpytor_data/HepG2_WGS.pytor",
+    )
+    ```
+    """
+
+    associated_file_formats: t.ClassVar[set[str]] = {"pytor", "vcf"}
+    """File formats associated with the splice cnvpytor track type."""
+
+    signal_name: t.Union[t.Literal["rd_snp", "rd", "snp"], UnsetType] = field(
+        default=UNSET, name="signal_name"
+    )
+    """Signal name. Default `"rd_nsp"`
+
+    * rd_snp : Read Depth and BAF Likelihood
+    * rd : Read depth
+    * snp : BAF likelihood
+    """
+
+    cnv_caller: t.Union[t.Literal["ReadDepth", "2D"], UnsetType] = field(
+        default=UNSET, name="cnv_caller"
+    )
+    """Name of CNV caller. Default `"2D"`.
+
+    Shows data based on available caller data.
+
+    * ReadDepth: Uses Read depth information only
+    * 2D: Uses both Read depth and BAF information
+    """
+
+    bin_size: t.Union[int, UnsetType] = field(default=UNSET, name="bin_size")
+    """Bin size. Default `100_000`.
+
+    * pytor file: Bin size should be avialable in the pytor file
+    * vcf: Bin size should be multiple of 10,000
+    """
+
+    colors: t.Union[list[str], UnsetType] = UNSET
+    """Color of the signals. Signal details are in file format section.
+
+    Default `["gray", "black", "green", "blue"]`.
     """
 
 
