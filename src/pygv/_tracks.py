@@ -734,6 +734,72 @@ class GwasTrack(BaseTrack, tag="gwas"):
     """
 
 
+class InteractTrack(BaseTrack, tag="interact"):
+    """Display pairwise interactions between genome regions as arcs.
+
+    Associated file formats: bedpe, interact, bigInteract
+
+    Ref: https://igv.org/doc/igvjs/#tracks/Interact
+
+    Example:
+    ```py
+    Config(
+        genome="hg38",
+        locus="chr2:65,489,209-65,795,733",
+        tracks=[
+            InteractTrack(
+                url="https://s3.amazonaws.com/igv.org.demo/GSM1872886_GM12878_CTCF_PET.bedpe.txt",
+                format="bedpe",
+                name="CTCF PET - proportional",
+                arc_type="proportional",
+                arc_orientation="UP",
+                color="rgb(0,200,0)",
+                log_scale=true,
+                max=80,
+                visibility_window=10_000_000,
+            ),
+            InteractTrack(
+                url="https://s3.amazonaws.com/igv.org.demo/GSM1872886_GM12878_CTCF_PET.bedpe.txt",
+                format="bedpe",
+                name="CTCF PET - nested",
+                arc_type="nested",
+                arc_orientation="DOWN",
+                color="blue",
+                alpha=0.15,
+                visibility_window=10_000_000,
+            ),
+        ],
+    )
+    ```
+    """
+
+    associated_file_formats: t.ClassVar[set[str]] = {"bedpe", "interact", "bigInteract"}
+    """File formats associated with the gwas type."""
+
+    arc_type: t.Union[
+        t.Literal["nested", "proportional", "inView", "partialInView"], UnsetType
+    ] = UNSET
+    """The arc type. Default `"nested"`.
+
+    * nested - Arc height is proportional to feature width.
+    * propotional - Arc height is proportional to feature score.
+    * inView - Proportional, only draw arcs that are completely in view.
+    * partialInView - Proportional, only draw arcs that are whole or partially in view.
+    """
+
+    arc_orientation: t.Union[t.Literal["UP", "DOWN"], UnsetType] = UNSET
+    """Direction of arcs ("UP" or "DOWN"). Default `"UP"`."""
+
+    alpha: t.Union[float, UnsetType] = UNSET
+    """Alpha transparency to apply to arcs that extend beyond viewport. Default `0.5`.
+
+    Must be between `0` and `1`.
+    """
+
+    thickness: t.Union[int, UnsetType] = UNSET
+    """Line thickness. Default `2`."""
+
+
 Track = t.Union[
     AnnotationTrack,
     WigTrack,
@@ -741,4 +807,5 @@ Track = t.Union[
     VariantTrack,
     MutationTrack,
     SegmentedCopyNumberTrack,
+    InteractTrack,
 ]
